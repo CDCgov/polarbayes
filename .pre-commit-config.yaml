@@ -1,0 +1,27 @@
+repos:
+  # General
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+  # Python
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      # Sort imports
+      - id: ruff
+        args: ["check", "--select", "I", "--fix"]
+        # lint
+      - id: ruff
+        # format
+      - id: ruff-format
+        args: ["--line-length", "79"]
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.8.8
+    hooks:
+      - id: uv-lock

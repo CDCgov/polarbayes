@@ -1,0 +1,15 @@
+site_name: "Polarbayes"
+repo_url: "https://github.com/dylanhmorris/polarbayes"
+
+theme:
+  name: "material"
+
+plugins:
+  - search:
+  - autorefs:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+          inventories:
+            - "https://docs.python.org/3/objects.inv"

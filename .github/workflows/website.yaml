@@ -1,0 +1,58 @@
+name: "Build and deploy website"
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  pages: "write"
+  id-token: "write"
+
+jobs:
+  build-site:
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Checkout repository"
+      uses: "actions/checkout@v4"
+
+    - name: "Install uv"
+      uses: "astral-sh/setup-uv@v6"
+      with:
+        version: "0.7.21"
+        enable-cache: true
+
+    - name: "Set up Python"
+      uses: "actions/setup-python@v5"
+
+    - name: "Install the project via uv"
+      run: "uv sync --locked --group docs"
+
+    - name: "Build site"
+      run: "uv run mkdocs build"
+
+    - name: "Upload site artifact"
+      uses: actions/upload-pages-artifact@v3
+      with:
+        name: "github-pages"
+        path: "site"
+        retention-days: "3"
+
+  deploy-site:
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }} # test
+
+    runs-on: "ubuntu-latest"
+    needs: "build-site"
+
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"
+
+    steps:
+      - name: "Deploy site to GitHub Pages"
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: "github-pages"
+          preview: false
+          token: "${{ secrets.GITHUB_TOKEN }}"

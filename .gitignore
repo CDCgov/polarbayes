@@ -1,0 +1,11 @@
+# build
+*.egg-info*
+
+*.pyc
+
+__pycache__
+
+.venv
+
+# documentation
+site/*
