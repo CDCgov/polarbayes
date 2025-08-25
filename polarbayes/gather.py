@@ -94,24 +94,20 @@ def gather_variables(
     # more informative error message than `unpivot()` gives on its own
     [
         _assert_not_in_index_columns(k, v, index_names)
-        for k, v in dict(
-            value_name=value_name, variable_name=variable_name
-        ).items()
+        for k, v in dict(value_name=value_name, variable_name=variable_name).items()
     ]
 
-    return data.unpivot(
-        index=index, variable_name=variable_name, value_name=value_name
-    )
+    return data.unpivot(index=index, variable_name=variable_name, value_name=value_name)
 
 
 def gather_draws(
     data: az.InferenceData,
     group: str = "posterior",
     combined: bool = True,
-    var_names: Iterable[str] = None,
-    filter_vars: str = None,
-    num_samples: int = None,
-    rng: bool | int | np.random.Generator = None,
+    var_names: Iterable[str] | None = None,
+    filter_vars: str | None = None,
+    num_samples: int | None = None,
+    rng: bool | int | np.random.Generator | None = None,
     value_name: str = "value",
     variable_name: str = "variable",
 ) -> pl.DataFrame:
@@ -189,5 +185,5 @@ def gather_draws(
             )
             for var in var_names
         ],
-        how="diagonal",
+        how="diagonal_relaxed",
     )
