@@ -74,19 +74,15 @@ def test_gather_mixed_types():
     types of variables to gather gracefully.
     """
     dat = copy.deepcopy(rugby_field_data)
-    dat.posterior["intercept_int"] = (
-        dat.posterior["intercept"].round().astype("int")
-    )
+    dat.posterior["intercept_int"] = dat.posterior["intercept"].round().astype("int")
     dat.posterior["defs_int"] = dat.posterior["defs"].round().astype("int")
-    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype(
-        "str"
-    assert result_all["value"].dtype == pl.String
+    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype("str")
 
     # union of all types is string
     result_all = gather_draws(dat, "posterior")
     data_vars = list(dat.posterior.keys())
     assert_gathered_draws_as_expected(result_all, data_vars)
-    assert result_all["value"].dtype.is_(pl.String)
+    assert result_all["value"].dtype == pl.String
 
     # union of string and float is float
     result_float = gather_draws(
@@ -98,10 +94,6 @@ def test_gather_mixed_types():
     assert result_float["value"].dtype.is_float()
 
     # if only integers are extracted, should be integers
-    result_int = gather_draws(
-        dat, "posterior", var_names=["intercept_int", "defs_int"]
-    )
-    assert_gathered_draws_as_expected(
-        result_int, ["intercept_int", "defs_int"]
-    )
+    result_int = gather_draws(dat, "posterior", var_names=["intercept_int", "defs_int"])
+    assert_gathered_draws_as_expected(result_int, ["intercept_int", "defs_int"])
     assert result_int["value"].dtype.is_integer()
