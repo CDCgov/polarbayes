@@ -1,0 +1,36 @@
+name: "Run tests and update coverage"
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: "read"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    name: "Run tests and upload coverage"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v5
+        
+      - name: "Set up polarbayes"
+        uses: "./.github/actions/setup-polarbayes"
+
+      - name: "Run tests"
+        run: uv run pytest --cov --cov-branch --cov-report=xml
+
+      - name: "Upload coverage reports to Codecov"
+        uses: "codecov/codecov-action@v5"
+        with:
+          token: "${{ secrets.CODECOV_TOKEN }}"
+          slug: "CDCgov/polarbayes"
+          fail_ci_if_error: true
+          verbose: true
