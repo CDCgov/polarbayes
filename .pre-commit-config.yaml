@@ -11,7 +11,7 @@ repos:
       - id: trailing-whitespace
   # Python
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.8
+    rev: v0.12.10
     hooks:
       # Sort imports
       - id: ruff
@@ -22,6 +22,6 @@ repos:
       - id: ruff-format
         args: ["--line-length", "79"]
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.8.8
+    rev: 0.8.13
     hooks:
       - id: uv-lock
