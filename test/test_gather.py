@@ -2,9 +2,29 @@ import pytest
 import arviz as az
 import polars as pl
 from polarbayes.gather import gather_draws
-
+import copy
 
 rugby_field_data = az.load_arviz_data("rugby_field")
+
+
+def assert_gathered_draws_as_expected(gathered_draws, variables):
+    """
+    Helper function for general expectations on the output of a
+    gather_draws() calls.
+    """
+    assert isinstance(gathered_draws, pl.DataFrame)
+    # all and only variables targeted should be present in the
+    # variable column of the gathered dataframe.
+    assert all([v in gathered_draws["variable"] for v in variables])
+    assert gathered_draws["variable"].is_in(variables).all()
+    assert "chain" in gathered_draws.columns
+    assert "draw" in gathered_draws.columns
+    # chain and draw should never be null and should always
+    # be ints
+    assert gathered_draws["chain"].is_not_null().all()
+    assert gathered_draws["draw"].is_not_null().any()
+    assert gathered_draws["chain"].dtype.is_integer()
+    assert gathered_draws["draw"].dtype.is_integer()
 
 
 @pytest.mark.parametrize(
@@ -26,21 +46,11 @@ def test_gather_mixed_indices(data, test_vars):
     mixed indices gracefully, with null
     where a variable is not indexed
     """
-    print(data)
     result = gather_draws(data, "posterior")
     data_vars = list(data.posterior.keys())
     # all and only variables from posterior group should
     # be present in the variable column
-    assert all([v in result["variable"] for v in data_vars])
-    assert result["variable"].is_in(data_vars).all()
-    assert "chain" in result.columns
-    assert "draw" in result.columns
-    # chain and draw should never be null and should always
-    # be ints
-    assert result["chain"].dtype.is_integer()
-    assert result["draw"].dtype.is_integer()
-    assert result["chain"].is_not_null().all()
-    assert result["draw"].is_not_null().any()
+    assert_gathered_draws_as_expected(result, data_vars)
 
     # variables not indexed by a given column should have null values for that index column
     # while those that are should have non-null values
@@ -61,4 +71,27 @@ def test_gather_mixed_types():
     Test that gather_draws handles mixed
     types of variables to gather gracefully.
     """
-    pass
+    dat = copy.deepcopy(rugby_field_data)
+    dat.posterior["intercept_int"] = dat.posterior["intercept"].round().astype("int")
+    dat.posterior["defs_int"] = dat.posterior["defs"].round().astype("int")
+    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype("str")
+
+    # union of all types is string
+    result_all = gather_draws(dat, "posterior")
+    data_vars = list(dat.posterior.keys())
+    assert_gathered_draws_as_expected(result_all, data_vars)
+    assert result_all["value"].dtype.is_(pl.String)
+
+    # union of string and float is float
+    result_float = gather_draws(
+        dat, "posterior", var_names=["intercept", "intercept_int", "defs_int"]
+    )
+    assert_gathered_draws_as_expected(
+        result_float, ["intercept", "intercept_int", "defs_int"]
+    )
+    assert result_float["value"].dtype.is_float()
+
+    # if only integers are extracted, should be integers
+    result_int = gather_draws(dat, "posterior", var_names=["intercept_int", "defs_int"])
+    assert_gathered_draws_as_expected(result_int, ["intercept_int", "defs_int"])
+    assert result_int["value"].dtype.is_integer()
