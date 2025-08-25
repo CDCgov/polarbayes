@@ -80,7 +80,7 @@ def test_gather_mixed_types():
     dat.posterior["defs_int"] = dat.posterior["defs"].round().astype("int")
     dat.posterior["intercept_string"] = dat.posterior["intercept"].astype(
         "str"
-    )
+    assert result_all["value"].dtype == pl.String
 
     # union of all types is string
     result_all = gather_draws(dat, "posterior")
