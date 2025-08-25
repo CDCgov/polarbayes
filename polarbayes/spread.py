@@ -10,10 +10,10 @@ def spread_draws_to_pandas_(
     data: az.InferenceData,
     group: str = "posterior",
     combined: bool = True,
-    var_names: Iterable[str] = None,
-    filter_vars: str = None,
-    num_samples: int = None,
-    rng: bool | int | np.random.Generator = None,
+    var_names: Iterable[str] | None = None,
+    filter_vars: str | None = None,
+    num_samples: int | None = None,
+    rng: bool | int | np.random.Generator | None = None,
 ) -> pd.DataFrame:
     """
     Convert an ArviZ InferenceData object group to a Pandas
@@ -81,10 +81,10 @@ def spread_draws_and_get_index_cols(
     data: az.InferenceData,
     group: str = "posterior",
     combined: bool = True,
-    var_names: Iterable[str] = None,
-    filter_vars: str = None,
-    num_samples: int = None,
-    rng: bool | int | np.random.Generator = None,
+    var_names: Iterable[str] | None = None,
+    filter_vars: str | None = None,
+    num_samples: int | None = None,
+    rng: bool | int | np.random.Generator | None = None,
     enforce_drop_chain_draw: bool = False,
 ) -> tuple[pl.DataFrame, tuple]:
     """
@@ -151,10 +151,10 @@ def spread_draws(
     data: az.InferenceData,
     group: str = "posterior",
     combined: bool = True,
-    var_names: Iterable[str] = None,
-    filter_vars: str = None,
-    num_samples: int = None,
-    rng: bool | int | np.random.Generator = None,
+    var_names: Iterable[str] | None = None,
+    filter_vars: str | None = None,
+    num_samples: int | None = None,
+    rng: bool | int | np.random.Generator | None = None,
 ) -> pl.DataFrame:
     """
     Convert an ArviZ InferenceData object to a polars
