@@ -24,7 +24,7 @@ def assert_gathered_draws_as_expected(gathered_draws, variables):
     # chain and draw should never be null and should always
     # be ints
     assert gathered_draws["chain"].is_not_null().all()
-    assert gathered_draws["draw"].is_not_null().any()
+    assert gathered_draws["draw"].is_not_null().all()
     assert gathered_draws["chain"].dtype.is_integer()
     assert gathered_draws["draw"].dtype.is_integer()
 
