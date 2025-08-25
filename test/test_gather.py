@@ -88,7 +88,7 @@ def test_gather_mixed_types():
     assert_gathered_draws_as_expected(result_all, data_vars)
     assert result_all["value"].dtype == pl.String
 
-    # union of string and float is float
+    # union of int and float is float
     result_float = gather_draws(
         dat, "posterior", var_names=["intercept", "intercept_int", "defs_int"]
     )
