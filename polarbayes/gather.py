@@ -7,6 +7,13 @@ import polars as pl
 import polars.selectors as cs
 from polars._typing import ColumnNameOrSelector
 
+from polarbayes.schema import (
+    CHAIN_NAME,
+    DRAW_NAME,
+    VALUE_NAME,
+    VARIABLE_NAME,
+    order_index_column_names,
+)
 from polarbayes.spread import spread_draws_and_get_index_cols
 
 
@@ -49,8 +56,8 @@ def _assert_not_in_index_columns(
 def gather_variables(
     data: pl.LazyFrame | pl.DataFrame,
     index: ColumnNameOrSelector | Sequence[ColumnNameOrSelector] | None = None,
-    value_name: str = "value",
-    variable_name: str = "variable",
+    value_name: str | None = None,
+    variable_name: str | None = None,
 ):
     """
     Gather variable columns into key-value pairs.
@@ -70,10 +77,12 @@ def gather_variables(
         `az.InferenceData` object.
 
     value_name
-        Name for the value column in the output DataFrame. Default `"value"`.
+        Name for the value column in the output DataFrame.
+        If `None` (default), use `"value"`.
 
     variable_name
-        Name for the variable column in the output DataFrame. Default `"variable"`.
+        Name for the variable column in the output DataFrame.
+        If `None` (default), use `"variable"`.
 
     Returns
     -------
@@ -84,12 +93,19 @@ def gather_variables(
     Raises
     ------
     ValueError
-        If `value_name` or `variable_name` conflicts with requested index columns.
+        If `value_name` or `variable_name` conflicts with requested
+        index columns.
     """
+    if variable_name is None:
+        variable_name = VARIABLE_NAME
+    if value_name is None:
+        value_name = VALUE_NAME
     if index is None:
-        index = cs.by_name("chain", "draw", require_all=False)
+        index = cs.by_name(CHAIN_NAME, DRAW_NAME, require_all=False)
 
-    index_names = data.select(index).collect_schema().names()
+    index_names = order_index_column_names(
+        data.select(index).collect_schema().names()
+    )
 
     # more informative error message than `unpivot()` gives on its own
     [
@@ -101,7 +117,7 @@ def gather_variables(
 
     return data.unpivot(
         index=index, variable_name=variable_name, value_name=value_name
-    )
+    ).select(index_names + [variable_name, value_name])  # order output columns
 
 
 def gather_draws(
@@ -112,8 +128,8 @@ def gather_draws(
     filter_vars: str | None = None,
     num_samples: int | None = None,
     rng: bool | int | np.random.Generator | None = None,
-    value_name: str = "value",
-    variable_name: str = "variable",
+    value_name: str | None = None,
+    variable_name: str | None = None,
 ) -> pl.DataFrame:
     """
     Convert an ArviZ InferenceData object to a polars
@@ -144,10 +160,12 @@ def gather_draws(
         `rng` parameter passed to `az.extract`.
 
     value_name
-        Name for the value column in the output DataFrame. Default `"value"`.
+        Name for the value column in the output DataFrame. if `None` (default),
+        use `"value"`.
 
     variable_name
-        Name for the variable column in the output DataFrame. Default `"variable"`.
+        Name for the variable column in the output DataFrame. if `None` (default),
+        use `"variable"`.
 
     Returns
     -------
@@ -158,6 +176,10 @@ def gather_draws(
         names, a column of associated variable values,
         plus (as needed) columns that index array-valued variables.
     """
+    if variable_name is None:
+        variable_name = VARIABLE_NAME
+    if value_name is None:
+        value_name = VALUE_NAME
     # need to extract all variables jointly to ensure same
     # draws for each
     extracted = az.extract(
@@ -171,7 +193,7 @@ def gather_draws(
         rng=rng,
     )
     var_names = extracted.data_vars.keys()
-    return pl.concat(
+    result = pl.concat(
         [
             gather_variables(
                 *spread_draws_and_get_index_cols(
@@ -184,10 +206,19 @@ def gather_draws(
                     rng=False,
                     enforce_drop_chain_draw=combined,
                 ),
-                variable_name="variable",
-                value_name="value",
+                variable_name=variable_name,
+                value_name=value_name,
             )
             for var in var_names
         ],
         how="diagonal_relaxed",
     )
+    # Need to order output columns here as well as
+    # in gather_variables() calls in case later gather_variables()
+    # calls add new index columns that were not present due to earlier
+    # calls, in which case those index columns will be out of order.
+    index_cols_ordered = order_index_column_names(
+        [x for x in result.columns if x not in [variable_name, value_name]]
+    )
+
+    return result.select(index_cols_ordered + [variable_name, value_name])
