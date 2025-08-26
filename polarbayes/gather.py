@@ -209,9 +209,12 @@ def gather_draws(
         ],
         how="diagonal_relaxed",
     )
+    # Need to order output columns here as well as
+    # in gather_variables() calls in case later gather_variables()
+    # calls add new index columns that were not present due to earlier
+    # calls, in which case those index columns will be out of order.
     index_cols_ordered = order_index_column_names(
         filter(lambda x: x not in [variable_name, value_name], result.columns)
     )
-    return result.select(
-        index_cols_ordered + [variable_name, value_name]
-    )  # order output columns
+
+    return result.select(index_cols_ordered + [variable_name, value_name])
