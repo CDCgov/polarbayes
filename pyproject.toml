@@ -12,6 +12,11 @@ dependencies = [
 license = "Apache-2.0"
 
 [dependency-groups]
+dev = [
+  {include-group = "docs"},
+  {include-group = "test"}
+]
+
 docs = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.15",
@@ -20,6 +25,7 @@ docs = [
 ]
 test = [
     "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
 ]
 
 [build-system]
