@@ -91,6 +91,23 @@ def test_gather_mixed_indices(data, test_vars):
                 assert col.is_null().all()
 
 
+@pytest.mark.parametrize(
+    ["data", "var_names", "expected_indices"],
+    [
+        (rugby_field_data, ["sd_def_field"], []),
+        (rugby_field_data, ["intercept", "sd_def_field"], ["field"]),
+        (rugby_field_data, ["defs", "sd_def_field"], ["team", "field"]),
+    ],
+)
+def test_gather_does_not_create_unneeded_indices(data, var_names, expected_indices):
+    """
+    Test that gather_draws() only creates index
+    columns if one of the variables needs them.
+    """
+    result = gather_draws(data, "posterior", var_names=var_names)
+    assert_gathered_draws_as_expected(result, var_names, expected_indices)
+
+
 def test_gather_mixed_types():
     """
     Test that gather_draws handles mixed

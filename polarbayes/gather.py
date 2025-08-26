@@ -113,7 +113,7 @@ def gather_variables(
 
     return data.unpivot(
         index=index, variable_name=variable_name, value_name=value_name
-    ).select(index_names + [variable_name, value_name])  # order output
+    ).select(index_names + [variable_name, value_name])  # order output columns
 
 
 def gather_draws(
@@ -212,4 +212,6 @@ def gather_draws(
     index_cols_ordered = order_index_column_names(
         filter(lambda x: x not in [variable_name, value_name], result.columns)
     )
-    return result.select(index_cols_ordered + [variable_name, value_name])
+    return result.select(
+        index_cols_ordered + [variable_name, value_name]
+    )  # order output columns
