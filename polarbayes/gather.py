@@ -70,10 +70,12 @@ def gather_variables(
         `az.InferenceData` object.
 
     value_name
-        Name for the value column in the output DataFrame. Default `"value"`.
+        Name for the value column in the output DataFrame.
+        Default `"value"`.
 
     variable_name
-        Name for the variable column in the output DataFrame. Default `"variable"`.
+        Name for the variable column in the output DataFrame.
+        Default `"variable"`.
 
     Returns
     -------
@@ -84,7 +86,8 @@ def gather_variables(
     Raises
     ------
     ValueError
-        If `value_name` or `variable_name` conflicts with requested index columns.
+        If `value_name` or `variable_name` conflicts with requested
+        index columns.
     """
     if index is None:
         index = cs.by_name("chain", "draw", require_all=False)
@@ -94,14 +97,10 @@ def gather_variables(
     # more informative error message than `unpivot()` gives on its own
     [
         _assert_not_in_index_columns(k, v, index_names)
-        for k, v in dict(
-            value_name=value_name, variable_name=variable_name
-        ).items()
+        for k, v in dict(value_name=value_name, variable_name=variable_name).items()
     ]
 
-    return data.unpivot(
-        index=index, variable_name=variable_name, value_name=value_name
-    )
+    return data.unpivot(index=index, variable_name=variable_name, value_name=value_name)
 
 
 def gather_draws(
