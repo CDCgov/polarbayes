@@ -1,4 +1,5 @@
 import pytest
+
 from polarbayes import schema as s
 
 
@@ -32,7 +33,12 @@ from polarbayes import schema as s
             s.DRAW_NAME + "_custom",
         ),
         (["a", "0b", "b"], ["0b", "a", "b"], None, None),
-        (["a", "0b", "b"], ["0b", "a", "b"], "custom_chain_name", "custom_draw_name"),
+        (
+            ["a", "0b", "b"],
+            ["0b", "a", "b"],
+            "custom_chain_name",
+            "custom_draw_name",
+        ),
         ([s.DRAW_NAME, s.CHAIN_NAME], [s.CHAIN_NAME, s.DRAW_NAME], None, None),
         (["a", "0b", s.CHAIN_NAME], [s.CHAIN_NAME, "0b", "a"], None, None),
         (["a", "0b", s.DRAW_NAME], [s.DRAW_NAME, "0b", "a"], None, None),
@@ -58,7 +64,9 @@ from polarbayes import schema as s
 )
 def test_order_index_column_names(input, expected, chain_name, draw_name):
     assert (
-        s.order_index_column_names(input, chain_name=chain_name, draw_name=draw_name)
+        s.order_index_column_names(
+            input, chain_name=chain_name, draw_name=draw_name
+        )
         == expected
     )
     # check it works with different types of iterable, not just lists.

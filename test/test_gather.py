@@ -5,7 +5,7 @@ import polars as pl
 import pytest
 
 from polarbayes.gather import gather_draws
-from polarbayes.schema import DRAW_NAME, CHAIN_NAME, VALUE_NAME, VARIABLE_NAME
+from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 
 rugby_field_data = az.load_arviz_data("rugby_field")
 
@@ -99,7 +99,9 @@ def test_gather_mixed_indices(data, test_vars):
         (rugby_field_data, ["defs", "sd_def_field"], ["team", "field"]),
     ],
 )
-def test_gather_does_not_create_unneeded_indices(data, var_names, expected_indices):
+def test_gather_does_not_create_unneeded_indices(
+    data, var_names, expected_indices
+):
     """
     Test that gather_draws() only creates index
     columns if one of the variables needs them.
@@ -114,9 +116,13 @@ def test_gather_mixed_types():
     types of variables to gather gracefully.
     """
     dat = copy.deepcopy(rugby_field_data)
-    dat.posterior["intercept_int"] = dat.posterior["intercept"].round().astype("int")
+    dat.posterior["intercept_int"] = (
+        dat.posterior["intercept"].round().astype("int")
+    )
     dat.posterior["defs_int"] = dat.posterior["defs"].round().astype("int")
-    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype("str")
+    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype(
+        "str"
+    )
     index_vars = ["team", "field"]
 
     # union of all types is string
@@ -135,7 +141,9 @@ def test_gather_mixed_types():
     assert result_float["value"].dtype.is_float()
 
     # if only integers are extracted, should be integers
-    result_int = gather_draws(dat, "posterior", var_names=["intercept_int", "defs_int"])
+    result_int = gather_draws(
+        dat, "posterior", var_names=["intercept_int", "defs_int"]
+    )
     assert_gathered_draws_as_expected(
         result_int, ["intercept_int", "defs_int"], index_vars
     )

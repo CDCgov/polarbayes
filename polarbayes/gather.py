@@ -7,14 +7,14 @@ import polars as pl
 import polars.selectors as cs
 from polars._typing import ColumnNameOrSelector
 
-from polarbayes.spread import spread_draws_and_get_index_cols
 from polarbayes.schema import (
-    order_index_column_names,
     CHAIN_NAME,
     DRAW_NAME,
-    VARIABLE_NAME,
     VALUE_NAME,
+    VARIABLE_NAME,
+    order_index_column_names,
 )
+from polarbayes.spread import spread_draws_and_get_index_cols
 
 
 def _assert_not_in_index_columns(
@@ -103,12 +103,16 @@ def gather_variables(
     if index is None:
         index = cs.by_name(CHAIN_NAME, DRAW_NAME, require_all=False)
 
-    index_names = order_index_column_names(data.select(index).collect_schema().names())
+    index_names = order_index_column_names(
+        data.select(index).collect_schema().names()
+    )
 
     # more informative error message than `unpivot()` gives on its own
     [
         _assert_not_in_index_columns(k, v, index_names)
-        for k, v in dict(value_name=value_name, variable_name=variable_name).items()
+        for k, v in dict(
+            value_name=value_name, variable_name=variable_name
+        ).items()
     ]
 
     return data.unpivot(
