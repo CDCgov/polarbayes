@@ -686,6 +686,14 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+dev = [
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings" },
+    { name = "mkdocstrings-python" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
@@ -704,6 +712,14 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+dev = [
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.15" },
+    { name = "mkdocstrings", specifier = ">=0.29.1" },
+    { name = "mkdocstrings-python", specifier = ">=1.16.12" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=6.2.1" },
+]
 docs = [
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-material", specifier = ">=9.6.15" },
