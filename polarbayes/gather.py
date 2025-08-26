@@ -218,7 +218,7 @@ def gather_draws(
     # calls add new index columns that were not present due to earlier
     # calls, in which case those index columns will be out of order.
     index_cols_ordered = order_index_column_names(
-        filter(lambda x: x not in [variable_name, value_name], result.columns)
+        [x for x in result.columns if x not in [variable_name, value_name]]
     )
 
     return result.select(index_cols_ordered + [variable_name, value_name])
