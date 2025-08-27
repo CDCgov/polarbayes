@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
-from polarbayes.schema import order_index_column_names, CHAIN_NAME, DRAW_NAME
+
+from polarbayes.schema import CHAIN_NAME, DRAW_NAME, order_index_column_names
 
 
 def spread_draws_to_pandas_(
