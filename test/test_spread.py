@@ -26,9 +26,7 @@ def test_spread_wraps_spread_with_index(spread_args, rng_seed):
     result, index = spread_draws_and_get_index_cols(
         rugby_field_data, **spread_args, rng=rng_index
     )
-    result_no_index = spread_draws(
-        rugby_field_data, **spread_args, rng=rng_no_index
-    )
+    result_no_index = spread_draws(rugby_field_data, **spread_args, rng=rng_no_index)
     assert result.equals(result_no_index)
     for col in index:
         assert col in result_no_index.columns
