@@ -1,6 +1,5 @@
 import arviz as az
 import numpy as np
-import polars as pl
 import pytest
 
 from polarbayes.spread import spread_draws, spread_draws_and_get_index_cols
