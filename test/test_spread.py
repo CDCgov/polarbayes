@@ -84,8 +84,14 @@ def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
     # result index
     assert set(result_index) == set(pd_df.index.names)
     # result index should be returned already ordered according to the schema
+    # and result columns should follow the same order.
     ordered_index = order_index_column_names(result_index)
     assert result_index == ordered_index
+    expected_cols = (
+        ordered_index
+        + result_df.select(cs.exclude(result_index)).collect_schema().names()
+    )
+    assert result_df.columns == expected_cols
 
     assert result_df.equals(
         pl.DataFrame(pd_df.reset_index()).select(
