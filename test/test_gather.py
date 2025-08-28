@@ -3,6 +3,7 @@ import copy
 import arviz as az
 import numpy as np
 import polars as pl
+import polars.selectors as cs
 import pytest
 
 from polarbayes.gather import (
@@ -100,6 +101,12 @@ def test_assert_not_in_index(arg_name, arg_value):
             ),
             None,
         ],
+        [
+            pl.LazyFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            None,
+        ],
     ],
 )
 @pytest.mark.parametrize("variable_name", [None, VARIABLE_NAME, "custom_name"])
@@ -112,7 +119,11 @@ def test_gather_variables_wraps_unpivot(
     lightly wraps the Polars unpivot operation.
     """
     if index_cols is None:
-        index_unpivot = [CHAIN_NAME, DRAW_NAME]
+        index_unpivot = (
+            data.select(cs.by_name(CHAIN_NAME, DRAW_NAME, require_all=False))
+            .collect_schema()
+            .names()
+        )
     else:
         index_unpivot = index_cols
     if variable_name is None:
@@ -145,6 +156,10 @@ def test_gather_variables_wraps_unpivot(
     if isinstance(expected, pl.LazyFrame):
         expected = expected.collect()
     assert actual.equals(expected)
+    assert variable_name_unpivot in actual.columns
+    assert value_name_unpivot in actual.columns
+    for i_col in index_unpivot:
+        assert i_col in actual.columns
 
 
 @pytest.mark.parametrize(
