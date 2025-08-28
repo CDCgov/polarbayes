@@ -4,6 +4,9 @@ import arviz as az
 import numpy as np
 import pandas as pd
 import polars as pl
+import polars.selectors as cs
+
+from polarbayes.schema import CHAIN_NAME, DRAW_NAME, order_index_column_names
 
 
 def spread_draws_to_pandas_(
@@ -63,7 +66,7 @@ def spread_draws_to_pandas_(
         rng=rng,
     ).to_dataframe()
     if combined:
-        df = df.drop(["chain", "draw"], axis=1)
+        df = df.drop([CHAIN_NAME, DRAW_NAME], axis=1)
         # az.extract with combined=True assumes that the InferenceData
         # object has "chain" and "draw" named dimensions and errors otherwise.
         # When the resultant dataset is converted to a pandas dataframe
@@ -139,12 +142,21 @@ def spread_draws_and_get_index_cols(
         rng=rng,
     )
     if enforce_drop_chain_draw:
-        df = df.drop(["chain", "draw"], axis=1)
+        df = df.drop([CHAIN_NAME, DRAW_NAME], axis=1)
         # this is handled automatically when `combined=True`
         # by spread_draws_to_pandas_,
         # but not when combined=False but the `data` input
         # is an already-combined output of `az.extract`.
-    return (pl.DataFrame(df.reset_index()), tuple(df.index.names))
+    df, index_cols = pl.DataFrame(df.reset_index()), df.index.names
+    index_cols_ordered = order_index_column_names(index_cols)
+
+    return (
+        df.select(
+            cs.by_name(index_cols_ordered, require_all=True),
+            cs.exclude(index_cols_ordered),
+        ),
+        index_cols_ordered,
+    )
 
 
 def spread_draws(
