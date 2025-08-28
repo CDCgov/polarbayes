@@ -59,6 +59,10 @@ def test_spread_to_pandas(spread_args, rng_seed):
         expected = expected.drop([CHAIN_NAME, DRAW_NAME], axis=1)
 
     assert result.equals(expected)
+    assert CHAIN_NAME in result.index.names
+    assert DRAW_NAME in result.index.names
+    assert CHAIN_NAME not in result.columns
+    assert DRAW_NAME not in result.columns
 
 
 @pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
