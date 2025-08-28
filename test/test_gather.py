@@ -5,31 +5,14 @@ import numpy as np
 import polars as pl
 import pytest
 
-from polarbayes.gather import gather_draws, _assert_not_in_index_columns
+from polarbayes.gather import (
+    gather_draws,
+    gather_variables,
+    _assert_not_in_index_columns,
+)
 from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 
 rugby_field_data = az.load_arviz_data("rugby_field")
-
-
-@pytest.mark.parametrize(
-    "arg_name", ["x", "a long name with spaces", "a_name%with_characters"]
-)
-@pytest.mark.parametrize("arg_value", ["test", "531a", "a_different_value"])
-def test_assert_not_in_index(arg_name, arg_value):
-    """
-    Test the _assert_not_in_index_columns function
-    raises the expected error iff required.
-    """
-    rng = np.random.default_rng(5)
-    index_cols = [str(x) for x in rng.random(10)]
-    with pytest.raises(
-        ValueError, match=f"Specified {arg_name}='{arg_value}'"
-    ):
-        _assert_not_in_index_columns(
-            arg_name, arg_value, index_cols + [arg_value]
-        )
-    no_raise = _assert_not_in_index_columns(arg_name, arg_value, index_cols)
-    assert no_raise is None
 
 
 def assert_gathered_draws_as_expected(
@@ -67,6 +50,101 @@ def assert_gathered_draws_as_expected(
         variable_name,
         value_name,
     ]
+
+
+@pytest.mark.parametrize(
+    "arg_name", ["x", "a long name with spaces", "a_name%with_characters"]
+)
+@pytest.mark.parametrize("arg_value", ["test", "531a", "a_different_value"])
+def test_assert_not_in_index(arg_name, arg_value):
+    """
+    Test the _assert_not_in_index_columns function
+    raises the expected error iff required.
+    """
+    rng = np.random.default_rng(5)
+    index_cols = [str(x) for x in rng.random(10)]
+    with pytest.raises(
+        ValueError, match=f"Specified {arg_name}='{arg_value}'"
+    ):
+        _assert_not_in_index_columns(
+            arg_name, arg_value, index_cols + [arg_value]
+        )
+    no_raise = _assert_not_in_index_columns(arg_name, arg_value, index_cols)
+    assert no_raise is None
+
+
+@pytest.mark.parametrize(
+    ["data", "index_cols"],
+    [
+        [
+            pl.DataFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            ["x", "y"],
+        ],
+        [
+            pl.LazyFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            ["x", "y"],
+        ],
+        [
+            pl.LazyFrame(
+                dict(
+                    x=range(10),
+                    y="c",
+                    z=[str(x) for x in range(5, 15)],
+                    chain=range(10),
+                    draw=range(10),
+                )
+            ),
+            None,
+        ],
+    ],
+)
+@pytest.mark.parametrize("variable_name", [None, VARIABLE_NAME, "custom_name"])
+@pytest.mark.parametrize("value_name", [None, VALUE_NAME, "custom_name_2"])
+def test_gather_variables_wraps_unpivot(
+    data, index_cols, variable_name, value_name
+):
+    """
+    Test that the gather_variables() function
+    lightly wraps the Polars unpivot operation.
+    """
+    if index_cols is None:
+        index_unpivot = [CHAIN_NAME, DRAW_NAME]
+    else:
+        index_unpivot = index_cols
+    if variable_name is None:
+        variable_name_unpivot = VARIABLE_NAME
+    else:
+        variable_name_unpivot = variable_name
+    if value_name is None:
+        value_name_unpivot = VALUE_NAME
+    else:
+        value_name_unpivot = value_name
+
+    expected = data.unpivot(
+        index=index_unpivot,
+        variable_name=variable_name_unpivot,
+        value_name=value_name_unpivot,
+    )
+    actual = gather_variables(
+        data,
+        index=index_cols,
+        variable_name=variable_name,
+        value_name=value_name,
+    )
+
+    # LazyFrames should not be instantiated by this call.
+    assert isinstance(actual, type(data))
+
+    # but instantiated frames should be equivalent
+    if isinstance(actual, pl.LazyFrame):
+        actual = actual.collect()
+    if isinstance(expected, pl.LazyFrame):
+        expected = expected.collect()
+    assert actual.equals(expected)
 
 
 @pytest.mark.parametrize(
