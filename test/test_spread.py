@@ -2,8 +2,10 @@ import arviz as az
 import numpy as np
 import pytest
 import pandas as pd
+import polars as pl
+import polars.selectors as cs
 
-from polarbayes.schema import CHAIN_NAME, DRAW_NAME
+from polarbayes.schema import order_index_column_names, CHAIN_NAME, DRAW_NAME
 
 from polarbayes.spread import (
     spread_draws_to_pandas_,
@@ -70,7 +72,35 @@ def test_spread_to_pandas(spread_args, rng_seed):
 
 
 @pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
+def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
+    rng_pl, rng_pd = get_n_identical_rngs(rng_seed, 2)
+    result_df, result_index = spread_draws_and_get_index_cols(
+        rugby_field_data, **spread_args, rng=rng_pl
+    )
+    pd_df = spread_draws_to_pandas_(
+        rugby_field_data, **spread_args, rng=rng_pd
+    )
+
+    # result index
+    assert set(result_index) == set(pd_df.index.names)
+    # result index should be returned already ordered according to the schema
+    ordered_index = order_index_column_names(result_index)
+    assert result_index == ordered_index
+
+    assert result_df.equals(
+        pl.DataFrame(pd_df.reset_index()).select(
+            cs.by_name(ordered_index, require_all=True),
+            cs.exclude(ordered_index),
+        )
+    )
+
+
+@pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
 def test_spread_wraps_spread_with_index(spread_args, rng_seed):
+    """
+    spread_draws should be a light wrapper of spread_draws_and_get_index_cols
+    and should agree with it.
+    """
     rng_index, rng_no_index = get_n_identical_rngs(rng_seed, 2)
     result, index = spread_draws_and_get_index_cols(
         rugby_field_data, **spread_args, rng=rng_index
