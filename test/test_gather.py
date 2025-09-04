@@ -162,6 +162,32 @@ def test_gather_variables_wraps_unpivot(
         assert i_col in actual.columns
 
 
+@pytest.mark.parametrize("variable_name", [None, VARIABLE_NAME, "custom_name"])
+@pytest.mark.parametrize("value_name", [None, VALUE_NAME, "custom_name_2"])
+def test_gather_draws_name_customization(variable_name, value_name):
+    """
+    Test defaults and customization for variable name
+    and value name in gather_draws()
+    """
+    if variable_name is None:
+        expected_variable_name = VARIABLE_NAME
+    else:
+        expected_variable_name = variable_name
+    if value_name is None:
+        expected_value_name = VALUE_NAME
+    else:
+        expected_value_name = value_name
+
+    actual = gather_draws(
+        rugby_field_data,
+        "posterior",
+        variable_name=variable_name,
+        value_name=value_name,
+    )
+    # variable_name and value_name should be the last two columns of the output
+    assert actual.columns[-2:] == [expected_variable_name, expected_value_name]
+
+
 @pytest.mark.parametrize(
     ["data", "test_vars"],
     [
@@ -193,8 +219,9 @@ def test_gather_mixed_indices(data, test_vars):
     # be present in the variable column
     assert_gathered_draws_as_expected(result, data_vars, index_vars)
 
-    # variables not indexed by a given column should have null values for that index column
-    # while those that are should have non-null values
+    # variables not indexed by a given column should have
+    # null values for that index column while those that are
+    # should have non-null values
     for var, index_col_dict in test_vars.items():
         df_filt = result.filter(pl.col("variable") == var)
         assert df_filt.height > 0
