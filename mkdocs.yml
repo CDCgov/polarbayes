@@ -26,7 +26,17 @@ plugins:
           options:
             annotations_path: "brief"
             docstring_style: "numpy"
+            scoped_crossrefs: true
+            line_length: 80
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            merge_init_into_class: true
+
           paths: ["."]
           inventories:
-            - "https://docs.python.org/3/objects.inv"
+            - url: "https://docs.python.org/3/objects.inv"
+            - url: "https://docs.pola.rs/api/python/stable/objects.inv"
+            - url: "https://numpy.org/doc/stable/objects.inv"
+            - url: "https://python.arviz.org/en/stable/objects.inv"
       enable_inventory: true
