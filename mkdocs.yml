@@ -23,6 +23,10 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
+          options:
+            annotations_path: "brief"
+            docstring_style: "numpy"
           paths: ["."]
           inventories:
             - "https://docs.python.org/3/objects.inv"
+      enable_inventory: true
