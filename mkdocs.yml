@@ -37,6 +37,7 @@ plugins:
           inventories:
             - url: "https://docs.python.org/3/objects.inv"
             - url: "https://docs.pola.rs/api/python/stable/objects.inv"
+             # but see https://github.com/pola-rs/polars/issues/7027
             - url: "https://numpy.org/doc/stable/objects.inv"
             - url: "https://python.arviz.org/en/stable/objects.inv"
       enable_inventory: true
