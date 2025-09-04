@@ -1,10 +1,16 @@
 import copy
 
 import arviz as az
+import numpy as np
 import polars as pl
+import polars.selectors as cs
 import pytest
 
-from polarbayes.gather import gather_draws
+from polarbayes.gather import (
+    gather_draws,
+    gather_variables,
+    _assert_not_in_index_columns,
+)
 from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 
 rugby_field_data = az.load_arviz_data("rugby_field")
@@ -48,6 +54,141 @@ def assert_gathered_draws_as_expected(
 
 
 @pytest.mark.parametrize(
+    "arg_name", ["x", "a long name with spaces", "a_name%with_characters"]
+)
+@pytest.mark.parametrize("arg_value", ["test", "531a", "a_different_value"])
+def test_assert_not_in_index(arg_name, arg_value):
+    """
+    Test the _assert_not_in_index_columns function
+    raises the expected error iff required.
+    """
+    rng = np.random.default_rng(5)
+    index_cols = [str(x) for x in rng.random(10)]
+    with pytest.raises(
+        ValueError, match=f"Specified {arg_name}='{arg_value}'"
+    ):
+        _assert_not_in_index_columns(
+            arg_name, arg_value, index_cols + [arg_value]
+        )
+    no_raise = _assert_not_in_index_columns(arg_name, arg_value, index_cols)
+    assert no_raise is None
+
+
+@pytest.mark.parametrize(
+    ["data", "index_cols"],
+    [
+        [
+            pl.DataFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            ["x", "y"],
+        ],
+        [
+            pl.LazyFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            ["x", "y"],
+        ],
+        [
+            pl.LazyFrame(
+                dict(
+                    x=range(10),
+                    y="c",
+                    z=[str(x) for x in range(5, 15)],
+                    chain=range(10),
+                    draw=range(10),
+                )
+            ),
+            None,
+        ],
+        [
+            pl.LazyFrame(
+                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+            ),
+            None,
+        ],
+    ],
+)
+@pytest.mark.parametrize("variable_name", [None, VARIABLE_NAME, "custom_name"])
+@pytest.mark.parametrize("value_name", [None, VALUE_NAME, "custom_name_2"])
+def test_gather_variables_wraps_unpivot(
+    data, index_cols, variable_name, value_name
+):
+    """
+    Test that the gather_variables() function
+    lightly wraps the Polars unpivot operation.
+    """
+    if index_cols is None:
+        index_unpivot = (
+            data.select(cs.by_name(CHAIN_NAME, DRAW_NAME, require_all=False))
+            .collect_schema()
+            .names()
+        )
+    else:
+        index_unpivot = index_cols
+    if variable_name is None:
+        variable_name_unpivot = VARIABLE_NAME
+    else:
+        variable_name_unpivot = variable_name
+    if value_name is None:
+        value_name_unpivot = VALUE_NAME
+    else:
+        value_name_unpivot = value_name
+
+    expected = data.unpivot(
+        index=index_unpivot,
+        variable_name=variable_name_unpivot,
+        value_name=value_name_unpivot,
+    )
+    actual = gather_variables(
+        data,
+        index=index_cols,
+        variable_name=variable_name,
+        value_name=value_name,
+    )
+
+    # LazyFrames should not be instantiated by this call.
+    assert isinstance(actual, type(data))
+
+    # but instantiated frames should be equivalent
+    if isinstance(actual, pl.LazyFrame):
+        actual = actual.collect()
+    if isinstance(expected, pl.LazyFrame):
+        expected = expected.collect()
+    assert actual.equals(expected)
+    assert variable_name_unpivot in actual.columns
+    assert value_name_unpivot in actual.columns
+    for i_col in index_unpivot:
+        assert i_col in actual.columns
+
+
+@pytest.mark.parametrize("variable_name", [None, VARIABLE_NAME, "custom_name"])
+@pytest.mark.parametrize("value_name", [None, VALUE_NAME, "custom_name_2"])
+def test_gather_draws_name_customization(variable_name, value_name):
+    """
+    Test defaults and customization for variable name
+    and value name in gather_draws()
+    """
+    if variable_name is None:
+        expected_variable_name = VARIABLE_NAME
+    else:
+        expected_variable_name = variable_name
+    if value_name is None:
+        expected_value_name = VALUE_NAME
+    else:
+        expected_value_name = value_name
+
+    actual = gather_draws(
+        rugby_field_data,
+        "posterior",
+        variable_name=variable_name,
+        value_name=value_name,
+    )
+    # variable_name and value_name should be the last two columns of the output
+    assert actual.columns[-2:] == [expected_variable_name, expected_value_name]
+
+
+@pytest.mark.parametrize(
     ["data", "test_vars"],
     [
         [
@@ -78,8 +219,9 @@ def test_gather_mixed_indices(data, test_vars):
     # be present in the variable column
     assert_gathered_draws_as_expected(result, data_vars, index_vars)
 
-    # variables not indexed by a given column should have null values for that index column
-    # while those that are should have non-null values
+    # variables not indexed by a given column should have
+    # null values for that index column while those that are
+    # should have non-null values
     for var, index_col_dict in test_vars.items():
         df_filt = result.filter(pl.col("variable") == var)
         assert df_filt.height > 0
