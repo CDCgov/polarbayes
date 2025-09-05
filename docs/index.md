@@ -33,3 +33,6 @@ You can install the development version of PolarBayes within an individual Pytho
     ```shell
 	pip install git+https://github.com/cdcgov/polarbayes.git
     ```
+
+## Getting Started
+This tutorial assumes no prior knowlege of tidybayes. If you've used tidybayes before, you may prefer the [quickstart for tidybayes users](tidybayes_quickstart.md)
