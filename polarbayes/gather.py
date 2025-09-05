@@ -61,8 +61,9 @@ def gather_variables(
 ):
     """
     Gather variable columns into key-value pairs.
-    Light wrapper of `pl.DataFrame.unpivot()`.
-    designed for use with `spread_draws()` output.
+    Light wrapper of [`pl.DataFrame.unpivot`][polars.DataFrame.unpivot]
+    designed for use with
+    [`spread_draws`][polarbayes.spread.spread_draws] output.
 
     Parameters
     ----------
@@ -71,10 +72,12 @@ def gather_variables(
     index
         Polars expression selecting mandatory or optional columns to
         index the gather. Passed as the `index` argument to
-        `pl.DataFrame.unpivot()`. If `None` (default), use the columns
+        [`pl.DataFrame.unpivot`][polars.DataFrame.unpivot].
+        If `None` (default), use the columns
         `["chain", "draw"]` if they are present. Those are the MCMC
-        index columns created when `spread_draws()` is on a standard
-        `az.InferenceData` object.
+        index columns created when
+        [`spread_draws`][polarbayes.spread.spread_draws] is called on
+        a standard [`az.InferenceData`][arviz.InferenceData] object.
 
     value_name
         Name for the value column in the output DataFrame.
@@ -134,7 +137,7 @@ def gather_draws(
     """
     Convert an ArviZ InferenceData object to a polars
     DataFrame of tidy (gathered) draws, using the syntax of
-    `arviz.extract`.
+    [`arviz.extract`][].
 
     Parameters
     ----------
@@ -142,22 +145,22 @@ def gather_draws(
         Data to convert.
 
     group
-        `group` parameter passed to `az.extract`.
+        `group` parameter passed to [`arviz.extract`][].
 
     combined
-        `combined` parameter passed to `az.extract`.
+        `combined` parameter passed to [`arviz.extract`][].
 
     var_names
-        `var_names` parameter passed to `az.extract`.
+        `var_names` parameter passed to [`arviz.extract`][].
 
     filter_vars
-        `filter_vars` parameter passed to `az.extract`.
+        `filter_vars` parameter passed to [`arviz.extract`][].
 
     num_samples
-        `num_samples` parameter passed to `az.extract`.
+        `num_samples` parameter passed to [`arviz.extract`][].
 
     rng
-        `rng` parameter passed to `az.extract`.
+        `rng` parameter passed to [`arviz.extract`][].
 
     value_name
         Name for the value column in the output DataFrame. if `None` (default),
@@ -172,7 +175,7 @@ def gather_draws(
     pl.DataFrame
         The DataFrame of tidy (gathered) draws, including
         standard columns to identify a unique sample
-        (typically `"chain"` and "draw"`), a column of variable
+        (typically `"chain"` and `"draw"`), a column of variable
         names, a column of associated variable values,
         plus (as needed) columns that index array-valued variables.
     """
