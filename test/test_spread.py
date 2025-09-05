@@ -13,18 +13,18 @@ from polarbayes.spread import (
     spread_draws_and_get_index_cols,
 )
 
-rugby_field_data = az.load_arviz_data("rugby_field")
+eight_schools_data = az.load_arviz_data("non_centered_eight")
 
 
 spread_args_and_rngs = [
-    [dict(var_names=["defs", "intercept"]), None],
+    [dict(var_names=["mu", "theta_t"]), None],
     [dict(num_samples=4), 42],
-    [dict(filter_vars="like", var_names=["def"]), None],
-    [dict(filter_vars="regex", var_names=["(def)|(intercept)"]), None],
+    [dict(filter_vars="like", var_names=["theta"]), None],
+    [dict(filter_vars="regex", var_names=["(theta_t)|(mu)"]), None],
     [
         dict(
             filter_vars="regex",
-            var_names=["(def)|(intercept)"],
+            var_names="(theta_t)|(mu)",
             combined=False,
         ),
         None,
@@ -53,10 +53,10 @@ def test_spread_to_pandas(spread_args, rng_seed):
     """
     rng_spread, rng_extract = get_n_identical_rngs(rng_seed, 2)
     result = spread_draws_to_pandas_(
-        rugby_field_data, **spread_args, rng=rng_spread
+        eight_schools_data, **spread_args, rng=rng_spread
     )
     expected = az.extract(
-        rugby_field_data, **spread_args, rng=rng_extract
+        eight_schools_data, **spread_args, rng=rng_extract
     ).to_dataframe()
     # check that duplicated columns get dropped when required.
     if spread_args.get("combined", True):
@@ -75,10 +75,10 @@ def test_spread_to_pandas(spread_args, rng_seed):
 def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
     rng_pl, rng_pd = get_n_identical_rngs(rng_seed, 2)
     result_df, result_index = spread_draws_and_get_index_cols(
-        rugby_field_data, **spread_args, rng=rng_pl
+        eight_schools_data, **spread_args, rng=rng_pl
     )
     pd_df = spread_draws_to_pandas_(
-        rugby_field_data, **spread_args, rng=rng_pd
+        eight_schools_data, **spread_args, rng=rng_pd
     )
 
     # result index
@@ -104,15 +104,16 @@ def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
 @pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
 def test_spread_wraps_spread_with_index(spread_args, rng_seed):
     """
-    spread_draws should be a light wrapper of spread_draws_and_get_index_cols
-    and should agree with it.
+    spread_draws should be a light wrapper of
+    spread_draws_and_get_index_cols and should
+    agree with it.
     """
     rng_index, rng_no_index = get_n_identical_rngs(rng_seed, 2)
     result, index = spread_draws_and_get_index_cols(
-        rugby_field_data, **spread_args, rng=rng_index
+        eight_schools_data, **spread_args, rng=rng_index
     )
     result_no_index = spread_draws(
-        rugby_field_data, **spread_args, rng=rng_no_index
+        eight_schools_data, **spread_args, rng=rng_no_index
     )
     assert result.equals(result_no_index)
     for col in index:
