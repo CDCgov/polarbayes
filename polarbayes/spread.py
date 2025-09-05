@@ -29,22 +29,22 @@ def spread_draws_to_pandas_(
         Data to convert.
 
     group
-        `group` parameter passed to `az.extract`.
+        `group` parameter passed to [`arviz.extract`][].
 
     combined
-        `combined` parameter passed to `az.extract`.
+        `combined` parameter passed to [`arviz.extract`][].
 
     var_names
-        `var_names` parameter passed to `az.extract`.
+        `var_names` parameter passed to [`arviz.extract`][].
 
     filter_vars
-        `filter_vars` parameter passed to `az.extract`.
+        `filter_vars` parameter passed to [`arviz.extract`][].
 
     num_samples
-        `num_samples` parameter passed to `az.extract`.
+        `num_samples` parameter passed to [`arviz.extract`][].
 
     rng
-        `rng` parameter passed to `az.extract`.
+        `rng` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -102,22 +102,22 @@ def spread_draws_and_get_index_cols(
         Data to convert.
 
     group
-        `group` parameter passed to `az.extract`.
+        `group` parameter passed to [`arviz.extract`][].
 
     combined
-        `combined` parameter passed to `az.extract`.
+        `combined` parameter passed to [`arviz.extract`][].
 
     var_names
-        `var_names` parameter passed to `az.extract`.
+        `var_names` parameter passed to [`arviz.extract`][].
 
     filter_vars
-        `filter_vars` parameter passed to `az.extract`.
+        `filter_vars` parameter passed to [`arviz.extract`][].
 
     num_samples
-        `num_samples` parameter passed to `az.extract`.
+        `num_samples` parameter passed to [`arviz.extract`][].
 
     rng
-        `rng` parameter passed to `az.extract`.
+        `rng` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -128,7 +128,7 @@ def spread_draws_and_get_index_cols(
         variables and index columns. Columns named for variables
         contain the sampled values of those variables. Index columns
         include standard columns to identify a unique
-        sample (typically `"chain"` and "draw"`) plus (as needed)
+        sample (typically `"chain"` and `"draw"`) plus (as needed)
         columns that index array-valued variables.
     """
 
@@ -146,7 +146,7 @@ def spread_draws_and_get_index_cols(
         # this is handled automatically when `combined=True`
         # by spread_draws_to_pandas_,
         # but not when combined=False but the `data` input
-        # is an already-combined output of `az.extract`.
+        # is an already-combined output of [`arviz.extract`][].
     df, index_cols = pl.DataFrame(df.reset_index()), df.index.names
     index_cols_ordered = order_index_column_names(index_cols)
 
@@ -171,7 +171,7 @@ def spread_draws(
     """
     Convert an ArviZ InferenceData object to a polars
     DataFrame of tidy (spread) draws, using the syntax of
-    `arviz.extract`.
+    [`arviz.extract`][].
 
     Parameters
     ----------
@@ -179,22 +179,22 @@ def spread_draws(
         Data to convert.
 
     group
-        `group` parameter passed to `az.extract`.
+        `group` parameter passed to [`arviz.extract`][].
 
     combined
-        `combined` parameter passed to `az.extract`.
+        `combined` parameter passed to [`arviz.extract`][].
 
     var_names
-        `var_names` parameter passed to `az.extract`.
+        `var_names` parameter passed to [`arviz.extract`][].
 
     filter_vars
-        `var_names` parameter passed to `az.extract`.
+        `var_names` parameter passed to [`arviz.extract`][].
 
     num_samples
-        `num_samples` parameter passed to `az.extract`.
+        `num_samples` parameter passed to [`arviz.extract`][].
 
     rng
-        `rng` parameter passed to `az.extract`.
+        `rng` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -203,7 +203,7 @@ def spread_draws(
         variables and index columns. Columns named for variables
         contain the sampled values of those variables. Index columns
         include standard columns to identify a unique
-        sample (typically `"chain"` and "draw"`) plus (as needed)
+        sample (typically `"chain"` and `"draw"`) plus (as needed)
         columns that index array-valued variables.
     """
     result, _ = spread_draws_and_get_index_cols(
