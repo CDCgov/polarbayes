@@ -13,7 +13,7 @@ from polarbayes.gather import (
 )
 from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 
-rugby_field_data = az.load_arviz_data("rugby_field")
+eight_schools_data = az.load_arviz_data("non_centered_eight")
 
 
 def assert_gathered_draws_as_expected(
@@ -179,7 +179,7 @@ def test_gather_draws_name_customization(variable_name, value_name):
         expected_value_name = value_name
 
     actual = gather_draws(
-        rugby_field_data,
+        eight_schools_data,
         "posterior",
         variable_name=variable_name,
         value_name=value_name,
@@ -192,11 +192,11 @@ def test_gather_draws_name_customization(variable_name, value_name):
     ["data", "test_vars"],
     [
         [
-            rugby_field_data,
+            eight_schools_data,
             {
-                "intercept": {"team": False, "field": True},
-                "defs": {"team": True, "field": True},
-                "sd_def_field": {"team": False, "field": False},
+                "mu": {"school": False},
+                "theta_t": {"school": True},
+                "tau": {"school": False},
             },
         ]
     ],
@@ -236,9 +236,9 @@ def test_gather_mixed_indices(data, test_vars):
 @pytest.mark.parametrize(
     ["data", "var_names", "expected_indices"],
     [
-        (rugby_field_data, ["sd_def_field"], []),
-        (rugby_field_data, ["intercept", "sd_def_field"], ["field"]),
-        (rugby_field_data, ["defs", "sd_def_field"], ["team", "field"]),
+        (eight_schools_data, ["mu"], []),
+        (eight_schools_data, ["theta_t"], ["school"]),
+        (eight_schools_data, ["mu", "theta_t"], ["school"]),
     ],
 )
 def test_gather_does_not_create_unneeded_indices(
@@ -257,15 +257,13 @@ def test_gather_mixed_types():
     Test that gather_draws handles mixed
     types of variables to gather gracefully.
     """
-    dat = copy.deepcopy(rugby_field_data)
-    dat.posterior["intercept_int"] = (
-        dat.posterior["intercept"].round().astype("int")
+    dat = copy.deepcopy(eight_schools_data)
+    dat.posterior["mu_int"] = dat.posterior["mu"].round().astype("int")
+    dat.posterior["theta_t_int"] = (
+        dat.posterior["theta_t"].round().astype("int")
     )
-    dat.posterior["defs_int"] = dat.posterior["defs"].round().astype("int")
-    dat.posterior["intercept_string"] = dat.posterior["intercept"].astype(
-        "str"
-    )
-    index_vars = ["team", "field"]
+    dat.posterior["mu_string"] = dat.posterior["mu"].astype("str")
+    index_vars = ["school"]
 
     # union of all types is string
     result_all = gather_draws(dat, "posterior")
@@ -275,18 +273,18 @@ def test_gather_mixed_types():
 
     # union of int and float is float
     result_float = gather_draws(
-        dat, "posterior", var_names=["intercept", "intercept_int", "defs_int"]
+        dat, "posterior", var_names=["mu", "mu_int", "theta_t_int"]
     )
     assert_gathered_draws_as_expected(
-        result_float, ["intercept", "intercept_int", "defs_int"], index_vars
+        result_float, ["mu", "mu_int", "theta_t_int"], index_vars
     )
     assert result_float["value"].dtype.is_float()
 
     # if only integers are extracted, should be integers
     result_int = gather_draws(
-        dat, "posterior", var_names=["intercept_int", "defs_int"]
+        dat, "posterior", var_names=["mu_int", "theta_t_int"]
     )
     assert_gathered_draws_as_expected(
-        result_int, ["intercept_int", "defs_int"], index_vars
+        result_int, ["mu_int", "theta_t_int"], index_vars
     )
     assert result_int["value"].dtype.is_integer()
