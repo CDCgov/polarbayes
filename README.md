@@ -4,7 +4,7 @@
 
 A python package for "tidy data"-style analysis of Bayesian inference output using the Polars dataframe library
 
-This package aims to be a spiritual Python port of the ``tidybayes`` package for the R/`tidyverse` ecosystem. It substitutes `polars` for the `tidyverse` and ArviZ `InferenceData` objects for `posterior::draws_df` objects.
+This package aims to be a spiritual Python port of the [`tidybayes`](https://mjskay.github.io/tidybayes/) package for the [R](https://www.r-project.org/)/[`tidyverse`](https://www.tidyverse.org/) ecosystem. It substitutes [`polars`](https://pola.rs/) for the [`tidyverse`](https://www.tidyverse.org/) and [ArviZ](https://python.arviz.org/en/stable/) [`InferenceData`](https://python.arviz.org/en/latest/getting_started/XarrayforArviZ.html#inferencedata) objects for [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects.
 
 
 ## General Disclaimer
