@@ -7,6 +7,7 @@ theme:
     repo: fontawesome/brands/github
   features:
     - content.tooltips
+    - content.code.copy
   palette:
     - scheme: default
       toggle:
@@ -42,3 +43,8 @@ plugins:
             - url: "https://numpy.org/doc/stable/objects.inv"
             - url: "https://python.arviz.org/en/stable/objects.inv"
       enable_inventory: true
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
