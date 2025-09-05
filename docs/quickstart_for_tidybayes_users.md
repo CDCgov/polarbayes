@@ -6,7 +6,7 @@ If you have used tidybayes before, PolarBayes should feel familiar. The key func
 
 ### No dots in column names
 
-Canonical reserved column names in tidybayes begin with dots (`.`): `.chain`, `.draw`, `.variable`, `.value`. PolarBayes avoids dots in variable names because dots have a special role in Python syntax. Python is [object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming). In Python, as in many object-oriented programming languages, dots are used to access "attributes" and "methods" associated to particular objects.
+Reserved column names in tidybayes output begin with dots (`.`): `.chain`, `.iteration`, `.draw`, `.variable`, and `.value`. PolarBayes avoids dots in variable names because dots have a special role in Python syntax. Python is [object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming). In Python, as in many object-oriented programming languages, dots are used to access "attributes" and "methods" associated to particular objects.
 
 NOTE: As you may know, R also has object-oriented features. The equivalent R operator to the python dot (`.`) is the dollar sign (`$`). You may have written `df$.draw` to retrieve a column named `.draw` from a data frame named `df`. So a polars column name like `.draw` is potentially a bad idea in the same way that a data frame column name like `$draw` could be a bad idea in R.
 
