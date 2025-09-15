@@ -37,7 +37,7 @@ Reserved column names in tidybayes output begin with dots (`.`): `.chain`, `.ite
 
 NOTE: As you may know, R also has object-oriented features. The equivalent R operator to the python dot (`.`) is the dollar sign (`$`). You may have written `df$.draw` to retrieve a column named `.draw` from a data frame named `df`. So a polars column name like `.draw` is potentially a bad idea in the same way that a data frame column name like `$draw` could be a bad idea in R.
 
-In PolarBayes, we instead reserve the bare column names `chain` and `draw` for indexing, consistent with ArviZ conventions for indexing MCMC output. If you try to extract variables with those name names from an [`arviz.InferenceData`][] object, PolarBayes will error and suggest renaming those variables prior to extraction.
+In PolarBayes, we instead reserve the bare column names `chain` and `draw` for indexing, consistent with ArviZ conventions for indexing MCMC output. If you try to extract variables with those names from an [`arviz.InferenceData`][] object, PolarBayes will error and suggest renaming those variables prior to extraction.
 
 Similarly, the default [`gather_draws`][polarbayes.gather.gather_draws] variable and value column names are `variable` and `value`. The columns can be given alternative, custom values using the `value_name` and `variable_name` keyword arguments, respectively.
 
