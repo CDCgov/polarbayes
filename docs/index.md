@@ -6,7 +6,7 @@ This package aims to be a spiritual Python port of the [tidybayes](https://mjska
 
 
 ## Installation
-You can install the development version of PolarBayes within an individual Python [project](https://docs.astral.sh/uv/concepts/projects/) (recommended) or within an [enviroment](https://docs.astral.sh/uv/pip/environments/) using any Python package management tool that supports `git` remotes, including [`uv`](https://docs.astral.sh/uv/), [`poetry`](https://python-poetry.org/), and [`pip`](https://pip.pypa.io/en/stable/index.html).
+You can install the development version of PolarBayes within an individual Python [project](https://docs.astral.sh/uv/concepts/projects/) (recommended) or within an [environment](https://docs.astral.sh/uv/pip/environments/) using any Python package management tool that supports `git` remotes, including [`uv`](https://docs.astral.sh/uv/), [`poetry`](https://python-poetry.org/), and [`pip`](https://pip.pypa.io/en/stable/index.html).
 
 ### Project level
 === "uv"
