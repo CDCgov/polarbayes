@@ -35,4 +35,4 @@ You can install the development version of PolarBayes within an individual Pytho
     ```
 
 ## Getting Started
-If you've used tidybayes before, jump right in with the [PolarBayes quickstart for tidybayes users](quickstart_for_tidybayes_users.md). A full tutorial that assumes no prior knowlege of tidybayes is in progress.
+If you've used tidybayes before, jump right in with the [PolarBayes quickstart for tidybayes users](quickstart_for_tidybayes_users.md). A full tutorial that assumes no prior knowlege of tidybayes is [in progress](https://github.com/CDCgov/polarbayes/issues/37).
