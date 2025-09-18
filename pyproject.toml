@@ -18,6 +18,7 @@ dev = [
 ]
 
 docs = [
+    "markdown-callouts>=0.4.0",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.15",
     "mkdocstrings>=0.29.1",
