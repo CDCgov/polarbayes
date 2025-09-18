@@ -20,6 +20,8 @@ This installs PolarBayes at the environment level using `pip`:
 pip install git+https://github.com/cdcgov/polarbayes.git
 ```
 
+## Documentation
+See the [PolarBayes documentation](https://cdcgov.github.io/polarbayes/) for getting started information, tutorials, and an API reference.
 
 ## General Disclaimer
 This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
