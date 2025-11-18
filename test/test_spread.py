@@ -58,9 +58,6 @@ def test_spread_to_pandas(spread_args, rng_seed):
     expected = az.extract(
         eight_schools_data, **spread_args, rng=rng_extract
     ).to_dataframe()
-    # check that duplicated columns get dropped when required.
-    if spread_args.get("combined", True):
-        expected = expected.drop([CHAIN_NAME, DRAW_NAME], axis=1)
 
     assert isinstance(result, pd.DataFrame)
     assert result.equals(expected)

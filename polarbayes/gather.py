@@ -207,7 +207,6 @@ def gather_draws(
                     filter_vars=None,
                     num_samples=None,
                     rng=False,
-                    enforce_drop_chain_draw=combined,
                 ),
                 variable_name=variable_name,
                 value_name=value_name,

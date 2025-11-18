@@ -6,7 +6,7 @@ import pandas as pd
 import polars as pl
 import polars.selectors as cs
 
-from polarbayes.schema import CHAIN_NAME, DRAW_NAME, order_index_column_names
+from polarbayes.schema import order_index_column_names
 
 
 def spread_draws_to_pandas_(
@@ -55,7 +55,7 @@ def spread_draws_to_pandas_(
        `var_names` or `filter_vars`, with columns containing
        the associated values of those variables.
     """
-    df = az.extract(
+    return az.extract(
         data,
         group=group,
         combined=combined,
@@ -65,19 +65,6 @@ def spread_draws_to_pandas_(
         keep_dataset=True,
         rng=rng,
     ).to_dataframe()
-    if combined:
-        df = df.drop([CHAIN_NAME, DRAW_NAME], axis=1)
-        # az.extract with combined=True assumes that the InferenceData
-        # object has "chain" and "draw" named dimensions and errors otherwise.
-        # When the resultant dataset is converted to a pandas dataframe
-        # via .to_dataframe(), "chain" and "draw" are included _both_
-        # as column names and as Pandas MultiIndex names.
-        # See https://github.com/pydata/xarray/issues/10538
-        #
-        # We only want/need chain and draw in the MultiIndex,
-        # so we drop the columns, which are guaranteed to exist
-        # per by the az.extract assumption mentioned above.
-    return df
 
 
 def spread_draws_and_get_index_cols(
@@ -88,7 +75,6 @@ def spread_draws_and_get_index_cols(
     filter_vars: str | None = None,
     num_samples: int | None = None,
     rng: bool | int | np.random.Generator | None = None,
-    enforce_drop_chain_draw: bool = False,
 ) -> tuple[pl.DataFrame, tuple]:
     """
     Convert an ArviZ InferenceData object to a polars
@@ -141,12 +127,6 @@ def spread_draws_and_get_index_cols(
         num_samples=num_samples,
         rng=rng,
     )
-    if enforce_drop_chain_draw:
-        df = df.drop([CHAIN_NAME, DRAW_NAME], axis=1)
-        # this is handled automatically when `combined=True`
-        # by spread_draws_to_pandas_,
-        # but not when combined=False but the `data` input
-        # is an already-combined output of [`arviz.extract`][].
     df, index_cols = pl.DataFrame(df.reset_index()), df.index.names
     index_cols_ordered = order_index_column_names(index_cols)
 
