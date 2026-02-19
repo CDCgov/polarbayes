@@ -1,5 +1,5 @@
 site_name: "Polarbayes"
-repo_url: "https://github.com/dylanhmorris/polarbayes"
+repo_url: "https://github.com/cdcgov/polarbayes"
 
 theme:
   name: "material"
