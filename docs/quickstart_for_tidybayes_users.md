@@ -4,7 +4,7 @@ If you have used tidybayes before, PolarBayes should feel familiar. The key func
 
 Most differences ultimately stem from the fact that PolarBayes is built on top of [ArviZ](https://python.arviz.org/en/stable/) and aims to wrap or mirror ArviZ's API and conventions to the extent possible.
 
-Both [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] call [`arviz.extract`][] to get MCMC samples. They accept all the configuration that `extract`  permits, so it is worth reading the [`extract` docs and examples][`arviz.extract`] to get a sense of what is possible.
+Both [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] call [`arviz.extract`][] to get MCMC samples. They accept all the configuration that `extract`  permits, so it is worth reading the [`extract` docs and examples](https://python.arviz.org/projects/base/en/latest/api/generated/arviz_base.extract.html#arviz_base.extract) to get a sense of what is possible.
 
 To get started, just provide list of variables to spread or gather as the `var_names` argument:
 
@@ -26,7 +26,7 @@ pb.gather_draws(data)
 
 ## Key differences between tidybayes and PolarBayes
 
-### `InferenceData` groups
+### `DataTree` groups
 PolarBayes extracts tidy data frames from MCMC output stored in an [`xarray.DataTree`][]  object. The tidybayes equivalent is the [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) format. Unlike [`draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects, [`xarray.DataTree`][] objects created from MCMC output by ArviZ are organized into ["groups"](https://python.arviz.org/projects/plots/en/latest/tutorials/overview.html#arviz-and-datatree) representing different categories of Bayesian input and output: `posterior` for posterior samples, `posterior_predictive` for posterior predictive draws, `prior_predictive` for prior predictive draws, et cetera.
 
 [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] can extract draws from any appropriate group. If no group is specified, they default to extracting from the `posterior` group.
