@@ -131,7 +131,7 @@ def gather_draws(
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
     value_name: str | None = None,
     variable_name: str | None = None,
 ) -> pl.DataFrame:
@@ -160,8 +160,9 @@ def gather_draws(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
+        an `int` seed or a `numpy.random.Generator`.
 
     value_name
         Name for the value column in the output DataFrame. if `None` (default),
@@ -194,7 +195,7 @@ def gather_draws(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        random_seed=rng,
+        random_seed=random_seed,
     )
     var_names = extracted.data_vars.keys()
     result = pl.concat(
@@ -207,7 +208,7 @@ def gather_draws(
                     combined=False,
                     filter_vars=None,
                     num_samples=None,
-                    rng=False,
+                    random_seed=None,
                 ),
                 variable_name=variable_name,
                 value_name=value_name,

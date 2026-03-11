@@ -17,7 +17,7 @@ def spread_draws_to_pandas_(
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> pd.DataFrame:
     """
     Convert an ArviZ DataTree group to a Pandas
@@ -44,8 +44,9 @@ def spread_draws_to_pandas_(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `random_seed` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
+        an `int` seed or a `numpy.random.Generator`.
 
     Returns
     -------
@@ -64,7 +65,7 @@ def spread_draws_to_pandas_(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        random_seed=rng,
+        random_seed=random_seed,
     ).to_dataframe()
 
 
@@ -75,7 +76,7 @@ def spread_draws_and_get_index_cols(
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> tuple[pl.DataFrame, tuple]:
     """
     Convert an ArviZ DataTree to a polars
@@ -103,8 +104,9 @@ def spread_draws_and_get_index_cols(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
+        an `int` seed or a `numpy.random.Generator`.
 
     Returns
     -------
@@ -126,7 +128,7 @@ def spread_draws_and_get_index_cols(
         var_names=var_names,
         filter_vars=filter_vars,
         num_samples=num_samples,
-        rng=rng,
+        random_seed=random_seed,
     )
     df, index_cols = pl.DataFrame(df.reset_index()), df.index.names
     index_cols_ordered = order_index_column_names(index_cols)
@@ -147,7 +149,7 @@ def spread_draws(
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> pl.DataFrame:
     """
     Convert an ArviZ DataTree to a polars
@@ -174,8 +176,9 @@ def spread_draws(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
+        an `int` seed or a `numpy.random.Generator`.
 
     Returns
     -------
@@ -194,6 +197,6 @@ def spread_draws(
         var_names=var_names,
         filter_vars=filter_vars,
         num_samples=num_samples,
-        rng=rng,
+        random_seed=random_seed,
     )
     return result
