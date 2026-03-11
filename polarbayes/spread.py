@@ -1,6 +1,6 @@
 from typing import Iterable
 
-import arviz as az
+import arviz_base as az
 import numpy as np
 import pandas as pd
 import polars as pl

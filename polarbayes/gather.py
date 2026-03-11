@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Iterable
 
-import arviz as az
+import arviz_base as az
 import numpy as np
 import polars as pl
 import polars.selectors as cs

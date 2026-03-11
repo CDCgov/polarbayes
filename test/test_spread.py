@@ -1,4 +1,4 @@
-import arviz as az
+import arviz_base as az
 import numpy as np
 import pytest
 import pandas as pd
