@@ -1,25 +1,26 @@
 from typing import Iterable
 
-import arviz as az
+import arviz_base as az
 import numpy as np
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
+import xarray as xr
 
 from polarbayes.schema import order_index_column_names
 
 
 def spread_draws_to_pandas_(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> pd.DataFrame:
     """
-    Convert an ArviZ InferenceData object group to a Pandas
+    Convert an [`xarray.DataTree`][] group to a Pandas
     DataFrame of tidy (spread) draws, using the syntax of
     arviz.extract
 
@@ -43,8 +44,8 @@ def spread_draws_to_pandas_(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -63,23 +64,23 @@ def spread_draws_to_pandas_(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        rng=rng,
+        random_seed=random_seed,
     ).to_dataframe()
 
 
 def spread_draws_and_get_index_cols(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> tuple[pl.DataFrame, tuple]:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (spread) draws, using the syntax of
-    arviz.extract. Return that DataFrame alongside a tuple
+    [`arviz.extract`][]. Return that DataFrame alongside a tuple
     giving the names of the DataFrame's index columns.
 
     Parameters
@@ -102,8 +103,8 @@ def spread_draws_and_get_index_cols(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -125,7 +126,7 @@ def spread_draws_and_get_index_cols(
         var_names=var_names,
         filter_vars=filter_vars,
         num_samples=num_samples,
-        rng=rng,
+        random_seed=random_seed,
     )
     df, index_cols = pl.DataFrame(df.reset_index()), df.index.names
     index_cols_ordered = order_index_column_names(index_cols)
@@ -140,16 +141,16 @@ def spread_draws_and_get_index_cols(
 
 
 def spread_draws(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (spread) draws, using the syntax of
     [`arviz.extract`][].
 
@@ -173,8 +174,8 @@ def spread_draws(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -193,6 +194,6 @@ def spread_draws(
         var_names=var_names,
         filter_vars=filter_vars,
         num_samples=num_samples,
-        rng=rng,
+        random_seed=random_seed,
     )
     return result

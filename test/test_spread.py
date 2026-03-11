@@ -1,4 +1,4 @@
-import arviz as az
+import arviz_base as az
 import numpy as np
 import pytest
 import pandas as pd
@@ -16,7 +16,7 @@ from polarbayes.spread import (
 eight_schools_data = az.load_arviz_data("non_centered_eight")
 
 
-spread_args_and_rngs = [
+spread_args_and_random_seeds = [
     [dict(var_names=["mu", "theta_t"]), None],
     [dict(num_samples=4), 42],
     [dict(filter_vars="like", var_names=["theta"]), None],
@@ -45,18 +45,25 @@ def get_n_identical_rngs(seed, n):
         return tuple(np.random.default_rng(seed) for _ in range(n))
 
 
-@pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
-def test_spread_to_pandas(spread_args, rng_seed):
+@pytest.mark.parametrize(
+    ["spread_args", "random_seed"], spread_args_and_random_seeds
+)
+def test_spread_to_pandas(spread_args, random_seed):
     """
     Test the spread_draws_to_pandas_ internal function
     is a light wrapper of az.extract with the expected properties.
     """
-    rng_spread, rng_extract = get_n_identical_rngs(rng_seed, 2)
+    random_seed_spread, random_seed_extract = get_n_identical_rngs(
+        random_seed, 2
+    )
     result = spread_draws_to_pandas_(
-        eight_schools_data, **spread_args, rng=rng_spread
+        eight_schools_data, **spread_args, random_seed=random_seed_spread
     )
     expected = az.extract(
-        eight_schools_data, **spread_args, rng=rng_extract
+        eight_schools_data,
+        **spread_args,
+        keep_dataset=True,
+        random_seed=random_seed_extract,
     ).to_dataframe()
 
     assert isinstance(result, pd.DataFrame)
@@ -68,14 +75,20 @@ def test_spread_to_pandas(spread_args, rng_seed):
     assert DRAW_NAME not in result.columns
 
 
-@pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
-def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
-    rng_pl, rng_pd = get_n_identical_rngs(rng_seed, 2)
+@pytest.mark.parametrize(
+    ["spread_args", "random_seed"], spread_args_and_random_seeds
+)
+def test_spread_draws_and_get_index_columns(spread_args, random_seed):
+    random_seed_pl, random_seed_pd = get_n_identical_rngs(random_seed, 2)
     result_df, result_index = spread_draws_and_get_index_cols(
-        eight_schools_data, **spread_args, rng=rng_pl
+        eight_schools_data,
+        **spread_args,
+        random_seed=random_seed_pl,
     )
     pd_df = spread_draws_to_pandas_(
-        eight_schools_data, **spread_args, rng=rng_pd
+        eight_schools_data,
+        **spread_args,
+        random_seed=random_seed_pd,
     )
 
     # result index
@@ -98,19 +111,27 @@ def test_spread_draws_and_get_index_columns(spread_args, rng_seed):
     )
 
 
-@pytest.mark.parametrize(["spread_args", "rng_seed"], spread_args_and_rngs)
-def test_spread_wraps_spread_with_index(spread_args, rng_seed):
+@pytest.mark.parametrize(
+    ["spread_args", "random_seed"], spread_args_and_random_seeds
+)
+def test_spread_wraps_spread_with_index(spread_args, random_seed):
     """
     spread_draws should be a light wrapper of
     spread_draws_and_get_index_cols and should
     agree with it.
     """
-    rng_index, rng_no_index = get_n_identical_rngs(rng_seed, 2)
+    random_seed_index, random_seed_no_index = get_n_identical_rngs(
+        random_seed, 2
+    )
     result, index = spread_draws_and_get_index_cols(
-        eight_schools_data, **spread_args, rng=rng_index
+        eight_schools_data,
+        **spread_args,
+        random_seed=random_seed_index,
     )
     result_no_index = spread_draws(
-        eight_schools_data, **spread_args, rng=rng_no_index
+        eight_schools_data,
+        **spread_args,
+        random_seed=random_seed_no_index,
     )
     assert result.equals(result_no_index)
     for col in index:

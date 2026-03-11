@@ -5,7 +5,7 @@ description = "Process Bayesian inference output with arviz and polars"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "arviz>=0.22.0",
+    "arviz-base>=1.0",
     "polars>=1.31.0",
     "xarray>=2025.10",
 ]
@@ -24,9 +24,11 @@ docs = [
     "mkdocs-material>=9.6.15",
     "mkdocstrings>=0.29.1",
     "mkdocstrings-python>=1.16.12",
+    "netcdf4>=1.7.4",
     "ruff>=0.12.12",
 ]
 test = [
+    "netcdf4>=1.7.4",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
 ]

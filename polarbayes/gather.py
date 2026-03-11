@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from typing import Iterable
 
-import arviz as az
+import arviz_base as az
 import numpy as np
 import polars as pl
 import polars.selectors as cs
+import xarray as xr
 from polars._typing import ColumnNameOrSelector
 
 from polarbayes.schema import (
@@ -77,7 +78,7 @@ def gather_variables(
         `["chain", "draw"]` if they are present. Those are the MCMC
         index columns created when
         [`spread_draws`][polarbayes.spread.spread_draws] is called on
-        a standard [`az.InferenceData`][arviz.InferenceData] object.
+        a compatible [`xarray.DataTree`][]
 
     value_name
         Name for the value column in the output DataFrame.
@@ -124,18 +125,18 @@ def gather_variables(
 
 
 def gather_draws(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
     filter_vars: str | None = None,
     num_samples: int | None = None,
-    rng: bool | int | np.random.Generator | None = None,
+    random_seed: int | np.random.Generator | None = None,
     value_name: str | None = None,
     variable_name: str | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (gathered) draws, using the syntax of
     [`arviz.extract`][].
 
@@ -159,8 +160,8 @@ def gather_draws(
     num_samples
         `num_samples` parameter passed to [`arviz.extract`][].
 
-    rng
-        `rng` parameter passed to [`arviz.extract`][].
+    random_seed
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     value_name
         Name for the value column in the output DataFrame. if `None` (default),
@@ -193,7 +194,7 @@ def gather_draws(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        rng=rng,
+        random_seed=random_seed,
     )
     var_names = extracted.data_vars.keys()
     result = pl.concat(
@@ -206,7 +207,7 @@ def gather_draws(
                     combined=False,
                     filter_vars=None,
                     num_samples=None,
-                    rng=False,
+                    random_seed=None,
                 ),
                 variable_name=variable_name,
                 value_name=value_name,

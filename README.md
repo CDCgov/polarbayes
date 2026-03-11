@@ -4,7 +4,7 @@
 
 PolarBayes is a Python package for converting Bayesian inference output into ["tidy data"](https://tidyr.tidyverse.org/articles/tidy-data.html) format dataframes.
 
-It aims to be a spiritual Python port of the [tidybayes](https://mjskay.github.io/tidybayes/) package for the [R](https://www.r-project.org/) and [tidyverse](https://www.tidyverse.org/) ecosystem. It substitutes [polars](https://docs.pola.rs/user-guide/getting-started/) for the tidyverse and [ArviZ](https://python.arviz.org/en/stable/index.html) [`InferenceData`](https://python.arviz.org/en/stable/api/inference_data.html) objects for [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects.
+It aims to be a spiritual Python port of the [tidybayes](https://mjskay.github.io/tidybayes/) package for the [R](https://www.r-project.org/) and [tidyverse](https://www.tidyverse.org/) ecosystem. It substitutes [polars](https://docs.pola.rs/user-guide/getting-started/) for the tidyverse and [xarray](https://xarray.dev/) [`DataTree`](https://python.arviz.org/projects/base/en/stable/tutorial/WorkingWithDataTree.html) objects created in and used by [ArviZ](https://python.arviz.org/en/stable/index.html)) for [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects.
 
 ## Installation
 You can install the development version of PolarBayes within an individual Python [project](https://docs.astral.sh/uv/concepts/projects/) (recommended) or within an [environment](https://docs.astral.sh/uv/pip/environments/) using any Python package management tool that supports `git` remotes, including [`uv`](https://docs.astral.sh/uv/), [`poetry`](https://python-poetry.org/), and [`pip`](https://pip.pypa.io/en/stable/index.html).
@@ -20,8 +20,12 @@ This installs PolarBayes at the environment level using `pip`:
 pip install git+https://github.com/cdcgov/polarbayes.git
 ```
 
+## Getting Started
+If you've used tidybayes before, jump right in with the [PolarBayes quickstart for tidybayes users](quickstart_for_tidybayes_users.md). A full tutorial that assumes no prior knowlege of tidybayes is [in progress](https://github.com/CDCgov/polarbayes/issues/37).
+
 ## Documentation
-See the [PolarBayes documentation](https://cdcgov.github.io/polarbayes/) for getting started information, tutorials, and an API reference.
+See the [PolarBayes documentation](https://cdcgov.github.io/polarbayes/) for additional getting started information, tutorials, and an API reference.
+
 
 ## General Disclaimer
 This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/organization/mission.htm).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
