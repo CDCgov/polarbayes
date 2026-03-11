@@ -20,7 +20,7 @@ def spread_draws_to_pandas_(
     random_seed: int | np.random.Generator | None = None,
 ) -> pd.DataFrame:
     """
-    Convert an ArviZ DataTree group to a Pandas
+    Convert an [`xarray.DataTree`][] group to a Pandas
     DataFrame of tidy (spread) draws, using the syntax of
     arviz.extract
 
@@ -45,8 +45,7 @@ def spread_draws_to_pandas_(
         `num_samples` parameter passed to [`arviz.extract`][].
 
     random_seed
-        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
-        an `int` seed or a `numpy.random.Generator`.
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -79,9 +78,9 @@ def spread_draws_and_get_index_cols(
     random_seed: int | np.random.Generator | None = None,
 ) -> tuple[pl.DataFrame, tuple]:
     """
-    Convert an ArviZ DataTree to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (spread) draws, using the syntax of
-    arviz.extract. Return that DataFrame alongside a tuple
+    [`arviz.extract`][]. Return that DataFrame alongside a tuple
     giving the names of the DataFrame's index columns.
 
     Parameters
@@ -105,8 +104,7 @@ def spread_draws_and_get_index_cols(
         `num_samples` parameter passed to [`arviz.extract`][].
 
     random_seed
-        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
-        an `int` seed or a `numpy.random.Generator`.
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -152,7 +150,7 @@ def spread_draws(
     random_seed: int | np.random.Generator | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ DataTree to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (spread) draws, using the syntax of
     [`arviz.extract`][].
 
@@ -177,8 +175,7 @@ def spread_draws(
         `num_samples` parameter passed to [`arviz.extract`][].
 
     random_seed
-        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
-        an `int` seed or a `numpy.random.Generator`.
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------

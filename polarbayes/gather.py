@@ -78,7 +78,7 @@ def gather_variables(
         `["chain", "draw"]` if they are present. Those are the MCMC
         index columns created when
         [`spread_draws`][polarbayes.spread.spread_draws] is called on
-        a standard ArviZ DataTree.
+        a compatible [`xarray.DataTree`][]
 
     value_name
         Name for the value column in the output DataFrame.
@@ -136,7 +136,7 @@ def gather_draws(
     variable_name: str | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ DataTree to a polars
+    Convert an [`xarray.DataTree`][] group to a polars
     DataFrame of tidy (gathered) draws, using the syntax of
     [`arviz.extract`][].
 
@@ -161,8 +161,7 @@ def gather_draws(
         `num_samples` parameter passed to [`arviz.extract`][].
 
     random_seed
-        `random_seed` parameter passed to [`arviz.extract`][]. Accepts
-        an `int` seed or a `numpy.random.Generator`.
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     value_name
         Name for the value column in the output DataFrame. if `None` (default),
