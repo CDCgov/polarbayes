@@ -24,9 +24,11 @@ docs = [
     "mkdocs-material>=9.6.15",
     "mkdocstrings>=0.29.1",
     "mkdocstrings-python>=1.16.12",
+    "netcdf4>=1.7.4",
     "ruff>=0.12.12",
 ]
 test = [
+    "netcdf4>=1.7.4",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
 ]
