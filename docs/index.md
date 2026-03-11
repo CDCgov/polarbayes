@@ -2,7 +2,7 @@
 
 PolarBayes is a Python package for converting Bayesian inference output into ["tidy data"](https://tidyr.tidyverse.org/articles/tidy-data.html) format dataframes.
 
-This package aims to be a spiritual Python port of the [tidybayes](https://mjskay.github.io/tidybayes/) package for the [R](https://www.r-project.org/) and [tidyverse](https://www.tidyverse.org/) ecosystem. It substitutes [polars](https://docs.pola.rs/user-guide/getting-started/) for the tidyverse and [ArviZ](https://python.arviz.org/en/stable/index.html) [`InferenceData`](https://python.arviz.org/en/stable/api/inference_data.html) objects for [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects.
+It aims to be a spiritual Python port of the [tidybayes](https://mjskay.github.io/tidybayes/) package for the [R](https://www.r-project.org/) and [tidyverse](https://www.tidyverse.org/) ecosystem. It substitutes [polars](https://docs.pola.rs/user-guide/getting-started/) for the tidyverse and [xarray](https://xarray.dev/) [`DataTree`](https://python.arviz.org/projects/base/en/stable/tutorial/WorkingWithDataTree.html) objects created in and used by [ArviZ](https://python.arviz.org/en/stable/index.html)) for [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects.
 
 
 ## Installation

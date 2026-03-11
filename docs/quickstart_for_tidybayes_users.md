@@ -11,23 +11,23 @@ To get started, just provide list of variables to spread or gather as the `var_n
 ```python
 import polarbayes as pb
 
-pb.spread_draws(idata, var_names=["var1", "var2"])
-pb.gather_draws(idata, var_names=["var1", "var2"])
+pb.spread_draws(data, var_names=["var1", "var2"])
+pb.gather_draws(data, var_names=["var1", "var2"])
 
 ```
 
 Or provide no `var_names` to spread or gather all available variables:
 
 ```python
-pb.spread_draws(idata)
-pb.gather_draws(idata)
+pb.spread_draws(data)
+pb.gather_draws(data)
 ```
 
 
 ## Key differences between tidybayes and PolarBayes
 
 ### `InferenceData` groups
-PolarBayes extracts tidy data frames from MCMC output stored in an [`arviz.InferenceData`][]  object. The tidybayes equivalent is the [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) format. Unlike [`draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects, [`InferenceData`][`arviz.InferenceData`] objects are organized into ["groups"](https://python.arviz.org/en/latest/getting_started/XarrayforArviZ.html#xarray-for-arviz) representing different categories of Bayesian input and output: `posterior` for posterior samples, `posterior_predictive` for posterior predictive draws, `prior_predictive` for prior predictive draws, et cetera.
+PolarBayes extracts tidy data frames from MCMC output stored in an [`xarray.DataTree`][]  object. The tidybayes equivalent is the [`posterior::draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) format. Unlike [`draws_df`](https://mc-stan.org/posterior/reference/draws_df.html) objects, [`xarray.DataTree`][] objects created from MCMC output by ArviZ are organized into ["groups"](https://python.arviz.org/projects/plots/en/latest/tutorials/overview.html#arviz-and-datatree) representing different categories of Bayesian input and output: `posterior` for posterior samples, `posterior_predictive` for posterior predictive draws, `prior_predictive` for prior predictive draws, et cetera.
 
 [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] can extract draws from any appropriate group. If no group is specified, they default to extracting from the `posterior` group.
 
@@ -37,7 +37,7 @@ Reserved column names in tidybayes output begin with dots (`.`): `.chain`, `.ite
 
 NOTE: As you may know, R also has object-oriented features. The equivalent R operator to the python dot (`.`) is the dollar sign (`$`). You may have written `df$.draw` to retrieve a column named `.draw` from a data frame named `df`. So a polars column name like `.draw` is potentially a bad idea in the same way that a data frame column name like `$draw` could be a bad idea in R.
 
-In PolarBayes, we instead reserve the bare column names `chain` and `draw` for indexing, consistent with ArviZ conventions for indexing MCMC output. If you try to extract variables with those names from an [`arviz.InferenceData`][] object, PolarBayes will error and suggest renaming those variables prior to extraction.
+In PolarBayes, we instead reserve the bare column names `chain` and `draw` for indexing, consistent with ArviZ conventions for indexing MCMC output. If you try to extract variables with those names from an [`xarray.DataTree`][] object, PolarBayes will error and suggest renaming those variables prior to extraction.
 
 Similarly, the default [`gather_draws`][polarbayes.gather.gather_draws] variable and value column names are `variable` and `value`. The columns can be given alternative, custom values using the `value_name` and `variable_name` keyword arguments, respectively.
 
@@ -48,7 +48,7 @@ In `tidybayes`, the `.draw` column contains the unique ID of an MCMC sample acro
 In ArviZ, `draw` is equivalent to tidybayes's `.iteration`, and _not_ tidybayes's `.draw`; it is the ID of the MCMC sample _within_ a `chain`. Rather than create a single primary key column as tidybayes does, ArviZ instead uses `draw` and `chain` as a [composite primary key](https://en.wikipedia.org/wiki/Composite_key). Here too we follow ArviZ conventions in PolarBayes.
 
 ### Dimension names are automatic
-Array-valued parameters are stored in [`InferenceData`][arviz.InferenceData] objects with named dimensions. [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] respect those named dimensions. As a result, you cannot (but also do not need to) name the dimensions of array-valued variables when requesting them in a spread or gather call.
+Array-valued parameters are stored in [`xarray.DataTree`][] objects with named dimensions. [`spread_draws`][polarbayes.spread.spread_draws] and [`gather_draws`][polarbayes.gather.gather_draws] respect those named dimensions. As a result, you cannot (but also do not need to) name the dimensions of array-valued variables when requesting them in a spread or gather call.
 
 So this tidybayes R code:
 ```R
@@ -61,13 +61,12 @@ might become this PolarBayes Python code:
 draws = pb.spread_draws(mcmc_output_arviz, var_names = ["x1", "x2"])
 ```
 
-The PolarBayes output will still have `time` and `location` columns along with the MCMC sample ID columns, provided those are the names of the dimensions in the `mcmc_output_arviz` [`InferenceData`][arviz.InferenceData] object. If the dimension names in your [`InferenceData`][arviz.InferenceData] object are not the ones you want in your output data frame, you can simply rename them via [`polars.DataFrame.rename`][].
+The PolarBayes output will still have `time` and `location` columns along with the MCMC sample ID columns, provided those are the names of the dimensions in the `mcmc_output_arviz` [`xarray.DataTree`][] object. If the dimension names in your [`xarray.DataTree`][] object are not the ones you want in your output data frame, you can simply rename them via [`polars.DataFrame.rename`][].
 
 ### Dimension index conversion deferred to ArviZ
 For similar reasons, PolarBayes does not provide functionality equivalent to tidybayes's [`recover_types()`](https://mjskay.github.io/tidybayes/reference/recover_types.html) converting integer indexes for array-valued MCMC output into more interpretable quantities (e.g. named categories, timestamps, geographic coordinates). PolarBayes instead relies on ArviZ's built-in functionality for dimension indexing.
 
-ArviZ performs [`recover_types()`](https://mjskay.github.io/tidybayes/reference/recover_types.html)-like operations when [creating `InferenceData` objects](https://python.arviz.org/en/stable/getting_started/CreatingInferenceData.html) from probabilistic programming language (PPL) MCMC output. The degree and sophistication depends on the source PPL and what metadata it provides. ArviZ also has functionality for doing [manual dimension annotation](https://python.arviz.org/en/stable/api/generated/arviz.InferenceData.assign_coords.html).
-
+ArviZ performs [`recover_types()`](https://mjskay.github.io/tidybayes/reference/recover_types.html)-like operations when creating [`xarray.DataTree`][] objects from probabilistic programming language (PPL) MCMC output (examples: [from NumPyro](https://python.arviz.org/projects/base/en/latest/how_to/ConversionGuideNumPyro.html#converting-numpyro-objects-to-datatree), [from emcee](https://python.arviz.org/projects/base/en/stable/how_to/ConversionGuideEmcee.html)). The degree and sophistication of the dimension recovery depends on the source PPL and what metadata it provides. xarray also has functionality for doing [manual dimension annotation](https://docs.xarray.dev/en/stable/generated/xarray.Dataset.assign_coords.html).
 
 # Other resources
 
