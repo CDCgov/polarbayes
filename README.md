@@ -24,7 +24,7 @@ pip install git+https://github.com/cdcgov/polarbayes.git
 If you've used tidybayes before, jump right in with the [PolarBayes quickstart for tidybayes users](quickstart_for_tidybayes_users.md). A full tutorial that assumes no prior knowlege of tidybayes is [in progress](https://github.com/CDCgov/polarbayes/issues/37).
 
 ## Documentation
-See the [PolarBayes documentation](https://cdcgov.github.io/polarbayes/) foradditional getting started information, tutorials, and an API reference.
+See the [PolarBayes documentation](https://cdcgov.github.io/polarbayes/) for additional getting started information, tutorials, and an API reference.
 
 
 ## General Disclaimer
