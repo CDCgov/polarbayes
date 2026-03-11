@@ -5,6 +5,7 @@ import arviz as az
 import numpy as np
 import polars as pl
 import polars.selectors as cs
+import xarray as xr
 from polars._typing import ColumnNameOrSelector
 
 from polarbayes.schema import (
@@ -77,7 +78,7 @@ def gather_variables(
         `["chain", "draw"]` if they are present. Those are the MCMC
         index columns created when
         [`spread_draws`][polarbayes.spread.spread_draws] is called on
-        a standard [`az.InferenceData`][arviz.InferenceData] object.
+        a standard ArviZ DataTree.
 
     value_name
         Name for the value column in the output DataFrame.
@@ -124,7 +125,7 @@ def gather_variables(
 
 
 def gather_draws(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
@@ -135,7 +136,7 @@ def gather_draws(
     variable_name: str | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an ArviZ DataTree to a polars
     DataFrame of tidy (gathered) draws, using the syntax of
     [`arviz.extract`][].
 
@@ -193,7 +194,7 @@ def gather_draws(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        rng=rng,
+        random_seed=rng,
     )
     var_names = extracted.data_vars.keys()
     result = pl.concat(

@@ -5,12 +5,13 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
+import xarray as xr
 
 from polarbayes.schema import order_index_column_names
 
 
 def spread_draws_to_pandas_(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
@@ -19,7 +20,7 @@ def spread_draws_to_pandas_(
     rng: bool | int | np.random.Generator | None = None,
 ) -> pd.DataFrame:
     """
-    Convert an ArviZ InferenceData object group to a Pandas
+    Convert an ArviZ DataTree group to a Pandas
     DataFrame of tidy (spread) draws, using the syntax of
     arviz.extract
 
@@ -44,7 +45,7 @@ def spread_draws_to_pandas_(
         `num_samples` parameter passed to [`arviz.extract`][].
 
     rng
-        `rng` parameter passed to [`arviz.extract`][].
+        `random_seed` parameter passed to [`arviz.extract`][].
 
     Returns
     -------
@@ -63,12 +64,12 @@ def spread_draws_to_pandas_(
         filter_vars=filter_vars,
         num_samples=num_samples,
         keep_dataset=True,
-        rng=rng,
+        random_seed=rng,
     ).to_dataframe()
 
 
 def spread_draws_and_get_index_cols(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
@@ -77,7 +78,7 @@ def spread_draws_and_get_index_cols(
     rng: bool | int | np.random.Generator | None = None,
 ) -> tuple[pl.DataFrame, tuple]:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an ArviZ DataTree to a polars
     DataFrame of tidy (spread) draws, using the syntax of
     arviz.extract. Return that DataFrame alongside a tuple
     giving the names of the DataFrame's index columns.
@@ -140,7 +141,7 @@ def spread_draws_and_get_index_cols(
 
 
 def spread_draws(
-    data: az.InferenceData,
+    data: xr.DataTree,
     group: str = "posterior",
     combined: bool = True,
     var_names: Iterable[str] | None = None,
@@ -149,7 +150,7 @@ def spread_draws(
     rng: bool | int | np.random.Generator | None = None,
 ) -> pl.DataFrame:
     """
-    Convert an ArviZ InferenceData object to a polars
+    Convert an ArviZ DataTree to a polars
     DataFrame of tidy (spread) draws, using the syntax of
     [`arviz.extract`][].
 

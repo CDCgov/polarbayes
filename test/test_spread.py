@@ -56,7 +56,7 @@ def test_spread_to_pandas(spread_args, rng_seed):
         eight_schools_data, **spread_args, rng=rng_spread
     )
     expected = az.extract(
-        eight_schools_data, **spread_args, rng=rng_extract
+        eight_schools_data, **spread_args, keep_dataset=True, random_seed=rng_extract
     ).to_dataframe()
 
     assert isinstance(result, pd.DataFrame)
