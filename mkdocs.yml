@@ -42,6 +42,7 @@ plugins:
              # but see https://github.com/pola-rs/polars/issues/7027
             - url: "https://numpy.org/doc/stable/objects.inv"
             - url: "https://python.arviz.org/en/stable/objects.inv"
+              base_url: "https://python.arviz.org/" # handle aliasing
             - url: "https://docs.xarray.dev/en/latest/objects.inv"
       enable_inventory: true
 
