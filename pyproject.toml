@@ -19,13 +19,10 @@ dev = [
 ]
 
 docs = [
-    "markdown-callouts>=0.4.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.6.15",
     "mkdocstrings>=0.29.1",
     "mkdocstrings-python>=1.16.12",
-    "netcdf4>=1.7.4",
     "ruff>=0.12.12",
+    "zensical>=0.0.27",
 ]
 test = [
     "netcdf4>=1.7.4",

@@ -1,0 +1,71 @@
+[project]
+site_name = "PolarBayes"
+site_description = "Tidy Bayesian analysis with ArviZ and Polars."
+site_author = "PolarBayes Dev Team"
+site_url = "https://cdcgov.github.io/polarbayes"
+repo_url = "https://github.com/cdcgov/polarbayes"
+repo_name = "polarbayes"
+copyright = """
+Public domain within the United States. Copyright and related rights in the worldwide are waived through the CC0 1.0 Universal public domain dedication.
+  """
+[project.theme]
+language = "en"
+
+features = [
+    "announce.dismiss",
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.tooltips",
+    "content.tabs.link",
+    "content.footnote.tooltips",
+    "search.highlight",
+    "toc.follow",
+    "toc.integrate"
+]
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.plugins.offline]
+
+[[project.theme.palette]]
+  scheme = "slate"
+  toggle.icon = "lucide/sun"
+  toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+  scheme = "default"
+  toggle.icon = "lucide/moon"
+  toggle.name = "Switch to dark mode"
+
+
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+
+[project.plugins.mkdocstrings]
+enable_inventory = true
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["."]
+inventories = [
+  "https://docs.python.org/3/objects.inv",
+  "https://docs.pola.rs/api/python/stable/objects.inv",
+  "https://numpy.org/doc/stable/objects.inv",
+  { url = "https://python.arviz.org/en/stable/objects.inv", base_url = "https://python.arviz.org/"}, # handle aliasing
+  "https://docs.xarray.dev/en/latest/objects.inv"
+]
+[project.plugins.mkdocstrings.handlers.python.options]
+annotations_path = "brief"
+docstring_style = "numpy"
+scoped_crossrefs = true
+line_length = 80
+separate_signature = true
+show_signature_annotations = true
+signature_crossrefs = true
+merge_init_into_class = true
