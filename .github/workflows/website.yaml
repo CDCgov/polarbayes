@@ -21,7 +21,7 @@ jobs:
       uses: "./.github/actions/setup-polarbayes"
 
     - name: "Build site"
-      run: "uv run mkdocs build"
+      run: "uv run zensical build --clean"
 
     - name: "Upload site artifact"
       uses: actions/upload-pages-artifact@v4
