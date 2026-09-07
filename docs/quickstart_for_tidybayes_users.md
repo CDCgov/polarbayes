@@ -13,7 +13,6 @@ import polarbayes as pb
 
 pb.spread_draws(data, var_names=["var1", "var2"])
 pb.gather_draws(data, var_names=["var1", "var2"])
-
 ```
 
 Or provide no `var_names` to spread or gather all available variables:
@@ -58,7 +57,7 @@ draws <- mcmc_output |> spread_draws(x1[time], x2[time, location])
 might become this PolarBayes Python code:
 
 ```python
-draws = pb.spread_draws(mcmc_output_arviz, var_names = ["x1", "x2"])
+draws = pb.spread_draws(mcmc_output_arviz, var_names=["x1", "x2"])
 ```
 
 The PolarBayes output will still have `time` and `location` columns along with the MCMC sample ID columns, provided those are the names of the dimensions in the `mcmc_output_arviz` [`xarray.DataTree`][] object. If the dimension names in your [`xarray.DataTree`][] object are not the ones you want in your output data frame, you can simply rename them via [`polars.DataFrame.rename`][].

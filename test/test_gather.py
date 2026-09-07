@@ -7,9 +7,9 @@ import polars.selectors as cs
 import pytest
 
 from polarbayes.gather import (
+    _assert_not_in_index_columns,
     gather_draws,
     gather_variables,
-    _assert_not_in_index_columns,
 )
 from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 

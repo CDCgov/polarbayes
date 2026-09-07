@@ -1,5 +1,4 @@
-from collections.abc import Sequence
-from typing import Iterable
+from collections.abc import Iterable, Sequence
 
 import arviz_base as az
 import numpy as np
@@ -51,7 +50,6 @@ def _assert_not_in_index_columns(
             f"in the input data frame. Either specify a different "
             f" {arg_name} or rename the index column named '{arg_value}'."
         )
-    return None
 
 
 def gather_variables(
