@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 import arviz_base as az
 import numpy as np
