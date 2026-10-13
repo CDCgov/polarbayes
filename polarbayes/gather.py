@@ -112,9 +112,10 @@ def gather_variables(
     # more informative error message than `unpivot()` gives on its own
     [
         _assert_not_in_index_columns(k, v, index_names)
-        for k, v in dict(
-            value_name=value_name, variable_name=variable_name
-        ).items()
+        for k, v in {
+            "value_name": value_name,
+            "variable_name": variable_name,
+        }.items()
     ]
 
     return data.unpivot(

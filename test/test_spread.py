@@ -16,19 +16,19 @@ eight_schools_data = az.load_arviz_data("non_centered_eight")
 
 
 spread_args_and_random_seeds = [
-    [dict(var_names=["mu", "theta_t"]), None],
-    [dict(num_samples=4), 42],
-    [dict(filter_vars="like", var_names=["theta"]), None],
-    [dict(filter_vars="regex", var_names=["(theta_t)|(mu)"]), None],
+    [{"var_names": ["mu", "theta_t"]}, None],
+    [{"num_samples": 4}, 42],
+    [{"filter_vars": "like", "var_names": ["theta"]}, None],
+    [{"filter_vars": "regex", "var_names": ["(theta_t)|(mu)"]}, None],
     [
-        dict(
-            filter_vars="regex",
-            var_names="(theta_t)|(mu)",
-            combined=False,
-        ),
+        {
+            "filter_vars": "regex",
+            "var_names": "(theta_t)|(mu)",
+            "combined": False,
+        },
         None,
     ],
-    [dict(), None],
+    [{}, None],
 ]
 
 
