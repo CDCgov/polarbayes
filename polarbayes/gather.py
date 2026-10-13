@@ -113,7 +113,8 @@ def gather_variables(
     [
         _assert_not_in_index_columns(k, v, index_names)
         for k, v in {
-            "value_name": value_name, "variable_name": variable_name
+            "value_name": value_name,
+            "variable_name": variable_name,
         }.items()
     ]
 
