@@ -2,7 +2,7 @@
 Column order schemas for polarbayes output
 """
 
-from typing import Iterable
+from collections.abc import Iterable
 
 # default and reserved column names
 CHAIN_NAME = "chain"

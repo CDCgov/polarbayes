@@ -7,9 +7,9 @@ import polars.selectors as cs
 import pytest
 
 from polarbayes.gather import (
+    _assert_not_in_index_columns,
     gather_draws,
     gather_variables,
-    _assert_not_in_index_columns,
 )
 from polarbayes.schema import CHAIN_NAME, DRAW_NAME, VALUE_NAME, VARIABLE_NAME
 
@@ -32,7 +32,7 @@ def assert_gathered_draws_as_expected(
     # variable column of the gathered dataframe.
     assert variable_name in gathered_draws.columns
     assert value_name in gathered_draws.columns
-    assert all([v in gathered_draws["variable"] for v in variables])
+    assert all(v in gathered_draws["variable"] for v in variables)
     assert gathered_draws[variable_name].is_in(variables).all()
     assert CHAIN_NAME in gathered_draws.columns
     assert DRAW_NAME in gathered_draws.columns
@@ -46,7 +46,7 @@ def assert_gathered_draws_as_expected(
     # order of columns should be "chain", "draw", <index columns, alphabetically>,
     # <variable name>, <value name>
     assert gathered_draws.columns == [CHAIN_NAME, DRAW_NAME] + sorted(
-        list(index_variables)
+        index_variables
     ) + [
         variable_name,
         value_name,
@@ -79,31 +79,31 @@ def test_assert_not_in_index(arg_name, arg_value):
     [
         [
             pl.DataFrame(
-                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+                {"x": range(10), "y": "c", "z": [str(x) for x in range(5, 15)]}
             ),
             ["x", "y"],
         ],
         [
             pl.LazyFrame(
-                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+                {"x": range(10), "y": "c", "z": [str(x) for x in range(5, 15)]}
             ),
             ["x", "y"],
         ],
         [
             pl.LazyFrame(
-                dict(
-                    x=range(10),
-                    y="c",
-                    z=[str(x) for x in range(5, 15)],
-                    chain=range(10),
-                    draw=range(10),
-                )
+                {
+                    "x": range(10),
+                    "y": "c",
+                    "z": [str(x) for x in range(5, 15)],
+                    "chain": range(10),
+                    "draw": range(10),
+                }
             ),
             None,
         ],
         [
             pl.LazyFrame(
-                dict(x=range(10), y="c", z=[str(x) for x in range(5, 15)])
+                {"x": range(10), "y": "c", "z": [str(x) for x in range(5, 15)]}
             ),
             None,
         ],
@@ -210,11 +210,11 @@ def test_gather_mixed_indices(data, test_vars):
     result = gather_draws(data, "posterior")
 
     data_vars = list(data.posterior.keys())
-    index_vars = set(
+    index_vars = {
         i_col
         for index_col_dict in test_vars.values()
-        for i_col in index_col_dict.keys()
-    )
+        for i_col in index_col_dict
+    }
     # all and only variables from posterior group should
     # be present in the variable column
     assert_gathered_draws_as_expected(result, data_vars, index_vars)

@@ -1,35 +1,34 @@
 import arviz_base as az
 import numpy as np
-import pytest
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
+import pytest
 
-from polarbayes.schema import order_index_column_names, CHAIN_NAME, DRAW_NAME
-
+from polarbayes.schema import CHAIN_NAME, DRAW_NAME, order_index_column_names
 from polarbayes.spread import (
-    spread_draws_to_pandas_,
     spread_draws,
     spread_draws_and_get_index_cols,
+    spread_draws_to_pandas_,
 )
 
 eight_schools_data = az.load_arviz_data("non_centered_eight")
 
 
 spread_args_and_random_seeds = [
-    [dict(var_names=["mu", "theta_t"]), None],
-    [dict(num_samples=4), 42],
-    [dict(filter_vars="like", var_names=["theta"]), None],
-    [dict(filter_vars="regex", var_names=["(theta_t)|(mu)"]), None],
+    [{"var_names": ["mu", "theta_t"]}, None],
+    [{"num_samples": 4}, 42],
+    [{"filter_vars": "like", "var_names": ["theta"]}, None],
+    [{"filter_vars": "regex", "var_names": ["(theta_t)|(mu)"]}, None],
     [
-        dict(
-            filter_vars="regex",
-            var_names="(theta_t)|(mu)",
-            combined=False,
-        ),
+        {
+            "filter_vars": "regex",
+            "var_names": "(theta_t)|(mu)",
+            "combined": False,
+        },
         None,
     ],
-    [dict(), None],
+    [{}, None],
 ]
 
 
