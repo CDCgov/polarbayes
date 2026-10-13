@@ -19,7 +19,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: "Set up polarbayes"
         uses: "./.github/actions/setup-polarbayes"
@@ -29,7 +29,7 @@ jobs:
         shell: "bash"
 
       - name: "Upload coverage reports to Codecov"
-        uses: "codecov/codecov-action@v5"
+        uses: "codecov/codecov-action@v7"
         with:
           token: "${{ secrets.CODECOV_TOKEN }}"
           slug: "CDCgov/polarbayes"
