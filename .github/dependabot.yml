@@ -10,3 +10,11 @@ updates:
     schedule:
       # Check for updates to python deps every week
       interval: "weekly"
+    groups:
+      uv-minor-patch:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
